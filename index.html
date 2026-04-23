@@ -3,303 +3,594 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CutFlow – Editor Pro</title>
+<title>CutFlow Pro</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Syne:wght@400;600;700&display=swap');
-
-*{box-sizing:border-box;margin:0;padding:0;-webkit-font-smoothing:antialiased}
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#080808;
-  --s1:#111;--s2:#181818;--s3:#222;--s4:#2a2a2a;
-  --b1:#1f1f1f;--b2:#2e2e2e;--b3:#3d3d3d;
-  --t1:#f2f2f2;--t2:#999;--t3:#555;--t4:#333;
-  --acc:#e8ff00;--acc2:#ff3c6e;--acc3:#00d4ff;
-  --track-v:#1a2a1a;--track-v-b:#2d4a2d;
-  --track-i:#1a1a2a;--track-i-b:#2d2d4a;
-  --track-t:#2a1a1a;--track-t-b:#4a2d2d;
-  --track-a:#1a2a2a;--track-a-b:#2d4a4a;
-  --r:6px;--r2:10px;
-  --sidebar:260px;--topbar:48px;--timeline:220px;--props:280px;
+  --bg:#0c0c0e;--s1:#13131a;--s2:#1a1a24;--s3:#22222e;--s4:#2a2a38;
+  --b1:#1e1e2a;--b2:#2e2e40;--b3:#3e3e54;--b4:#5a5a78;
+  --t1:#eeeef5;--t2:#9999bb;--t3:#5a5a78;--t4:#333348;
+  --acc:#7c6cfa;--acc2:#fa6c9a;--acc3:#6cfacc;--acc4:#facc6c;
+  --acc-glow:rgba(124,108,250,.25);
+  --trk0:#0d1f1a;--trk0b:#1a3a2e;--trk0c:#22aa7a;
+  --trk1:#0d0d1f;--trk1b:#1a1a3a;--trk1c:#6c7afa;
+  --trk2:#1f0d1a;--trk2b:#3a1a2e;--trk2c:#fa6caa;
+  --trk3:#0d1a1f;--trk3b:#1a2e3a;--trk3c:#6ccafa;
+  --trk4:#1f1a0d;--trk4b:#3a2e1a;--trk4c:#facc6c;
+  --r:5px;--r2:9px;--r3:14px;
+  --topH:50px;--tlH:230px;--sbW:250px;--prW:270px;
 }
-html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--t1);font-family:'Syne',sans-serif;font-size:13px}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-size:13px}
 
-/* ── TOP BAR ── */
-#topbar{height:var(--topbar);display:flex;align-items:center;gap:0;background:var(--s1);border-bottom:1px solid var(--b1);padding:0 12px;gap:8px;z-index:50;position:relative}
-.logo{font-family:'IBM Plex Mono',monospace;font-size:15px;font-weight:600;color:var(--acc);letter-spacing:.05em;margin-right:12px}
-.sep{width:1px;height:24px;background:var(--b2);margin:0 4px}
-.tb-btn{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border-radius:var(--r);border:none;cursor:pointer;font-family:'Syne',sans-serif;font-size:12px;font-weight:600;background:transparent;color:var(--t2);transition:all .12s}
+/* ── SPLASH ── */
+#splash{
+  position:fixed;inset:0;z-index:9999;
+  background:var(--bg);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:0;pointer-events:none;
+}
+#splash.done{animation:splashOut .5s cubic-bezier(.4,0,.2,1) forwards}
+@keyframes splashOut{to{opacity:0;transform:scale(1.04)}}
+
+.sp-logo{
+  font-family:'JetBrains Mono',monospace;font-weight:600;font-size:52px;
+  background:linear-gradient(135deg,var(--acc),var(--acc2),var(--acc3));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  letter-spacing:-.03em;
+  opacity:0;transform:translateY(18px);
+  animation:spUp .55s cubic-bezier(.22,1,.36,1) .1s forwards;
+}
+.sp-tag{
+  font-size:13px;color:var(--t3);letter-spacing:.18em;font-weight:500;
+  margin-top:10px;
+  opacity:0;
+  animation:spFade .4s ease .55s forwards;
+}
+.sp-bar-wrap{
+  margin-top:36px;width:160px;height:2px;background:var(--b2);border-radius:2px;overflow:hidden;
+  opacity:0;animation:spFade .3s ease .6s forwards;
+}
+.sp-bar{
+  height:100%;width:0%;border-radius:2px;
+  background:linear-gradient(90deg,var(--acc),var(--acc2));
+  animation:spLoad .75s cubic-bezier(.4,0,.2,1) .65s forwards;
+}
+.sp-dots{
+  margin-top:16px;display:flex;gap:5px;
+  opacity:0;animation:spFade .3s ease .65s forwards;
+}
+.sp-dot{
+  width:4px;height:4px;border-radius:50%;background:var(--b3);
+}
+.sp-dot:nth-child(1){animation:spDot .6s ease .7s infinite alternate}
+.sp-dot:nth-child(2){animation:spDot .6s ease .85s infinite alternate}
+.sp-dot:nth-child(3){animation:spDot .6s ease 1s infinite alternate}
+
+@keyframes spUp{to{opacity:1;transform:translateY(0)}}
+@keyframes spFade{to{opacity:1}}
+@keyframes spLoad{to{width:100%}}
+@keyframes spDot{to{background:var(--acc);transform:scale(1.4)}}
+
+/* app hidden until splash done */
+#topbar,#app,#timeline,#statusbar{opacity:0;transition:opacity .4s ease}
+#topbar.visible,#app.visible,#timeline.visible,#statusbar.visible{opacity:1}
+
+/* staggered panel slide-in */
+#sidebar{transform:translateX(-14px);transition:transform .45s cubic-bezier(.22,1,.36,1) .05s,opacity .45s ease .05s;opacity:0}
+#props{transform:translateX(14px);transition:transform .45s cubic-bezier(.22,1,.36,1) .1s,opacity .45s ease .1s;opacity:0}
+#timeline{transform:translateY(14px);transition:transform .45s cubic-bezier(.22,1,.36,1) .15s,opacity .45s ease .15s;opacity:0}
+#topbar{transform:translateY(-10px);transition:transform .4s cubic-bezier(.22,1,.36,1),opacity .4s ease;opacity:0}
+.app-ready #sidebar,.app-ready #props,.app-ready #timeline,.app-ready #topbar{opacity:1;transform:none}
+
+/* ── TOPBAR ── */
+#topbar{
+  height:var(--topH);display:flex;align-items:center;padding:0 14px;gap:6px;
+  background:var(--s1);border-bottom:1px solid var(--b1);
+  position:relative;z-index:100;
+}
+.logo{
+  font-family:'JetBrains Mono',monospace;font-weight:600;font-size:16px;
+  background:linear-gradient(135deg,var(--acc),var(--acc2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  margin-right:8px;letter-spacing:-.02em;flex-shrink:0;
+}
+.tb-sep{width:1px;height:22px;background:var(--b2);margin:0 2px}
+.tb-btn{
+  display:inline-flex;align-items:center;gap:5px;padding:5px 10px;
+  border-radius:var(--r);border:none;cursor:pointer;
+  font-family:'Outfit',sans-serif;font-size:12px;font-weight:500;
+  background:transparent;color:var(--t2);transition:all .12s;white-space:nowrap;
+}
 .tb-btn:hover{background:var(--s3);color:var(--t1)}
-.tb-btn.active{background:var(--s3);color:var(--acc)}
-.tb-btn svg{flex-shrink:0}
+.tb-btn.danger:hover{background:#2a1020;color:var(--acc2)}
 .spacer{flex:1}
-.export-btn{background:var(--acc);color:#000;padding:6px 16px;border-radius:var(--r);border:none;cursor:pointer;font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;display:flex;align-items:center;gap:6px;transition:all .12s}
-.export-btn:hover{background:#fff;transform:scale(.98)}
-.export-btn:disabled{opacity:.3;cursor:not-allowed;transform:none}
-.time-code{font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--acc);background:var(--s2);padding:4px 10px;border-radius:var(--r);border:1px solid var(--b2)}
+/* FORMAT SELECTOR */
+.fmt-group{display:flex;gap:3px;padding:3px;background:var(--s2);border-radius:var(--r2);border:1px solid var(--b2)}
+.fmt-btn{
+  padding:4px 9px;border-radius:6px;border:none;cursor:pointer;
+  font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;
+  background:transparent;color:var(--t3);transition:all .12s;
+}
+.fmt-btn:hover{color:var(--t2)}
+.fmt-btn.active{background:var(--acc);color:#fff;box-shadow:0 0 10px var(--acc-glow)}
+/* TIMECODE */
+.timecode{
+  font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;
+  color:var(--acc3);background:var(--s2);border:1px solid var(--b2);
+  padding:4px 10px;border-radius:var(--r);letter-spacing:.05em;
+}
+/* EXPORT BTN */
+.export-btn{
+  background:linear-gradient(135deg,var(--acc),var(--acc2));
+  color:#fff;border:none;border-radius:var(--r2);
+  padding:6px 16px;cursor:pointer;font-family:'Outfit',sans-serif;
+  font-size:12px;font-weight:700;letter-spacing:.03em;
+  display:flex;align-items:center;gap:6px;transition:all .15s;
+  box-shadow:0 0 20px rgba(124,108,250,.3);
+}
+.export-btn:hover{transform:scale(.97);box-shadow:0 0 30px rgba(124,108,250,.5)}
+.export-btn:disabled{opacity:.35;cursor:not-allowed;transform:none;box-shadow:none}
 
 /* ── MAIN LAYOUT ── */
-#main{display:flex;height:calc(100vh - var(--topbar) - var(--timeline));overflow:hidden}
+#app{display:flex;height:calc(100vh - var(--topH) - var(--tlH));overflow:hidden}
 
-/* ── MEDIA PANEL ── */
-#mediapanel{width:var(--sidebar);background:var(--s1);border-right:1px solid var(--b1);display:flex;flex-direction:column;flex-shrink:0;overflow:hidden}
-.panel-tabs{display:flex;border-bottom:1px solid var(--b1)}
-.ptab{flex:1;padding:8px 4px;text-align:center;font-size:11px;font-weight:600;color:var(--t3);cursor:pointer;border-bottom:2px solid transparent;transition:all .12s;letter-spacing:.04em}
-.ptab.active{color:var(--acc);border-bottom-color:var(--acc)}
-.panel-body{flex:1;overflow-y:auto;padding:10px}
-.panel-body::-webkit-scrollbar{width:3px}
-.panel-body::-webkit-scrollbar-thumb{background:var(--b3)}
+/* ── SIDEBAR (media) ── */
+#sidebar{
+  width:var(--sbW);background:var(--s1);border-right:1px solid var(--b1);
+  display:flex;flex-direction:column;flex-shrink:0;overflow:hidden;
+}
+.stabs{display:flex;border-bottom:1px solid var(--b1)}
+.stab{
+  flex:1;padding:8px 4px;text-align:center;
+  font-size:10px;font-weight:700;letter-spacing:.08em;
+  color:var(--t3);cursor:pointer;border-bottom:2px solid transparent;transition:all .12s;
+}
+.stab.active{color:var(--acc);border-bottom-color:var(--acc)}
+.sbody{flex:1;overflow-y:auto;padding:10px}
+.sbody::-webkit-scrollbar{width:3px}
+.sbody::-webkit-scrollbar-thumb{background:var(--b3);border-radius:2px}
 
-/* UPLOAD ZONE */
-.dropzone{border:1.5px dashed var(--b3);border-radius:var(--r2);padding:20px 12px;text-align:center;cursor:pointer;transition:all .15s;margin-bottom:10px}
-.dropzone:hover,.dropzone.over{border-color:var(--acc);background:rgba(232,255,0,.04)}
-.dropzone-icon{font-size:22px;margin-bottom:6px;opacity:.4}
-.dropzone p{font-size:11px;color:var(--t3);line-height:1.5}
-.dropzone strong{color:var(--t2)}
+/* DROPZONE */
+.dz{
+  border:1.5px dashed var(--b3);border-radius:var(--r2);
+  padding:18px 12px;text-align:center;cursor:pointer;
+  transition:all .15s;margin-bottom:10px;
+}
+.dz:hover,.dz.over{border-color:var(--acc);background:rgba(124,108,250,.06)}
+.dz-icon{font-size:24px;margin-bottom:5px;opacity:.35}
+.dz p{font-size:11px;color:var(--t3);line-height:1.6}
+.dz strong{color:var(--t2)}
 
 /* MEDIA GRID */
-.media-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
-.media-item{position:relative;border-radius:var(--r);overflow:hidden;cursor:grab;aspect-ratio:9/16;background:var(--s3);border:1.5px solid transparent;transition:border-color .12s}
-.media-item:hover{border-color:var(--b3)}
-.media-item.dragging-media{opacity:.4}
-.media-item img,.media-item video{width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}
-.media-badge{position:absolute;bottom:4px;left:4px;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:600;padding:2px 5px;border-radius:3px}
-.mb-v{background:var(--acc2);color:#fff}
+.mgrid{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.mitem{
+  position:relative;border-radius:var(--r);overflow:hidden;
+  aspect-ratio:9/14;background:var(--s3);cursor:grab;
+  border:1.5px solid transparent;transition:border-color .12s;
+}
+.mitem:hover{border-color:var(--b3)}
+.mitem img{width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}
+.mitem-badge{
+  position:absolute;top:4px;left:4px;
+  font-family:'JetBrains Mono',monospace;font-size:8px;font-weight:600;
+  padding:2px 5px;border-radius:3px;
+}
+.mb-v{background:var(--acc);color:#fff}
 .mb-i{background:var(--acc3);color:#000}
-.mb-a{background:var(--acc);color:#000}
-.media-dur{position:absolute;bottom:4px;right:4px;font-family:'IBM Plex Mono',monospace;font-size:9px;color:#fff;background:rgba(0,0,0,.7);padding:2px 4px;border-radius:3px}
-.media-add-btn{position:absolute;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;color:#fff;font-size:18px}
-.media-item:hover .media-add-btn{display:flex}
+.mitem-dur{
+  position:absolute;bottom:4px;right:4px;
+  font-family:'JetBrains Mono',monospace;font-size:8px;
+  color:#fff;background:rgba(0,0,0,.75);padding:2px 4px;border-radius:3px;
+}
+.mitem-add{
+  position:absolute;inset:0;background:rgba(124,108,250,.6);
+  display:none;align-items:center;justify-content:center;
+  color:#fff;font-size:22px;font-weight:300;
+}
+.mitem:hover .mitem-add{display:flex}
 
-/* ── PREVIEW ── */
-#preview-wrap{flex:1;display:flex;flex-direction:column;background:var(--bg);overflow:hidden}
-#preview-area{flex:1;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
-#canvas-wrap{position:relative;box-shadow:0 0 0 1px var(--b2),0 20px 60px rgba(0,0,0,.8)}
-#mainCanvas{display:block;border-radius:4px}
-#preview-empty{position:absolute;display:flex;flex-direction:column;align-items:center;gap:8px;color:var(--t4);pointer-events:none}
-#preview-empty svg{opacity:.2}
-#preview-empty span{font-size:12px;color:var(--t4)}
+/* ── PREVIEW AREA ── */
+#preview-wrap{flex:1;display:flex;flex-direction:column;background:var(--bg);overflow:hidden;min-width:0}
+#preview-area{
+  flex:1;display:flex;align-items:center;justify-content:center;
+  position:relative;overflow:hidden;background:
+    radial-gradient(ellipse at 30% 20%,rgba(124,108,250,.06) 0%,transparent 60%),
+    radial-gradient(ellipse at 70% 80%,rgba(250,108,154,.04) 0%,transparent 60%),
+    var(--bg);
+}
+#cvwrap{position:relative;flex-shrink:0}
+#mainCanvas{display:block;border-radius:6px;box-shadow:0 0 0 1px var(--b2),0 24px 80px rgba(0,0,0,.9)}
+.cv-empty{
+  position:absolute;inset:0;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:10px;
+  pointer-events:none;border-radius:6px;
+}
+.cv-empty svg{opacity:.12}
+.cv-empty span{font-size:12px;color:var(--t4)}
+/* FORMAT LABEL */
+.fmt-label{
+  position:absolute;top:8px;left:50%;transform:translateX(-50%);
+  font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:600;
+  color:var(--t3);background:rgba(0,0,0,.5);padding:2px 8px;border-radius:10px;
+  pointer-events:none;
+}
+/* OVERLAY ELEMENTS */
+.ov-el{position:absolute;cursor:move;border:1.5px solid transparent;user-select:none;transition:border-color .1s}
+.ov-el:hover{border-color:rgba(124,108,250,.6)}
+.ov-el.sel{border-color:var(--acc)}
+.ov-corner{position:absolute;bottom:-5px;right:-5px;width:10px;height:10px;background:var(--acc);border-radius:50%;cursor:se-resize;display:none}
+.ov-el.sel .ov-corner{display:block}
+.ov-txt{
+  position:absolute;cursor:move;user-select:none;
+  border:1.5px solid transparent;padding:3px 6px;border-radius:3px;
+  line-height:1.2;transition:border-color .1s;white-space:pre-wrap;
+}
+.ov-txt:hover{border-color:rgba(250,108,154,.6)}
+.ov-txt.sel{border-color:var(--acc2)}
 
-/* OVERLAY ELEMENTS (draggable on canvas) */
-.overlay-el{position:absolute;cursor:move;user-select:none;border:1.5px solid transparent;transition:border-color .1s}
-.overlay-el:hover,.overlay-el.sel{border-color:var(--acc)}
-.overlay-el.sel .overlay-handle{display:block}
-.overlay-handle{display:none;position:absolute;width:8px;height:8px;background:var(--acc);border-radius:50%;bottom:-4px;right:-4px;cursor:se-resize}
-
-/* PLAYBACK BAR */
-#playbar{height:44px;display:flex;align-items:center;gap:10px;padding:0 14px;background:var(--s1);border-top:1px solid var(--b1)}
-.play-btn{width:32px;height:32px;border-radius:50%;background:var(--acc);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#000;flex-shrink:0;transition:transform .1s}
+/* PLAYBAR */
+#playbar{
+  height:46px;display:flex;align-items:center;gap:8px;
+  padding:0 14px;background:var(--s1);border-top:1px solid var(--b1);
+  flex-shrink:0;
+}
+.play-btn{
+  width:34px;height:34px;border-radius:50%;border:none;cursor:pointer;
+  background:var(--acc);color:#fff;display:flex;align-items:center;justify-content:center;
+  transition:all .12s;flex-shrink:0;box-shadow:0 0 14px var(--acc-glow);
+}
 .play-btn:hover{transform:scale(1.08)}
-.prog-track{flex:1;height:3px;background:var(--b2);border-radius:2px;cursor:pointer;position:relative}
-.prog-fill{height:100%;background:var(--acc);border-radius:2px;pointer-events:none}
-.prog-head{position:absolute;top:-4px;width:11px;height:11px;background:var(--acc);border-radius:50%;transform:translateX(-50%);pointer-events:none}
-.vol-row{display:flex;align-items:center;gap:6px;color:var(--t3)}
-input[type=range].vol{width:60px;accent-color:var(--acc)}
+.ptrack{
+  flex:1;height:4px;background:var(--b2);border-radius:2px;
+  cursor:pointer;position:relative;
+}
+.pfill{height:100%;background:var(--acc);border-radius:2px;pointer-events:none}
+.phead{
+  position:absolute;top:-5px;width:14px;height:14px;
+  background:var(--acc);border-radius:50%;transform:translateX(-50%);
+  cursor:ew-resize;box-shadow:0 0 8px var(--acc-glow);
+}
+.vol-wrap{display:flex;align-items:center;gap:5px;color:var(--t3);flex-shrink:0}
+input[type=range].vol{width:56px;accent-color:var(--acc);cursor:pointer}
 
-/* ── PROPERTIES PANEL ── */
-#propspanel{width:var(--props);background:var(--s1);border-left:1px solid var(--b1);display:flex;flex-direction:column;overflow:hidden;flex-shrink:0}
-#propspanel .panel-title{padding:10px 14px;font-size:11px;font-weight:600;color:var(--t3);letter-spacing:.08em;border-bottom:1px solid var(--b1)}
+/* ── PROPS PANEL ── */
+#props{
+  width:var(--prW);background:var(--s1);border-left:1px solid var(--b1);
+  display:flex;flex-direction:column;flex-shrink:0;overflow:hidden;
+}
+.props-hdr{
+  padding:10px 14px;font-size:10px;font-weight:700;
+  letter-spacing:.1em;color:var(--t3);border-bottom:1px solid var(--b1);
+  display:flex;align-items:center;justify-content:space-between;
+}
 #props-body{flex:1;overflow-y:auto;padding:12px}
 #props-body::-webkit-scrollbar{width:3px}
-#props-body::-webkit-scrollbar-thumb{background:var(--b3)}
-.prop-section{margin-bottom:16px}
-.prop-section-title{font-size:10px;font-weight:600;color:var(--t3);letter-spacing:.1em;margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid var(--b1)}
-.prop-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;gap:8px}
-.prop-label{font-size:12px;color:var(--t2);flex-shrink:0}
-.prop-val{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--acc);min-width:36px;text-align:right}
-input[type=range]{width:100%;accent-color:var(--acc);cursor:pointer;height:3px}
-input[type=range]::-webkit-slider-thumb{width:12px;height:12px}
-input[type=number],input[type=text],select,textarea{background:var(--s3);border:1px solid var(--b2);border-radius:var(--r);color:var(--t1);padding:5px 8px;font-size:12px;font-family:'Syne',sans-serif;width:100%}
-input[type=number]:focus,input[type=text]:focus,select:focus,textarea:focus{outline:none;border-color:var(--acc)}
+#props-body::-webkit-scrollbar-thumb{background:var(--b3);border-radius:2px}
+.ps{margin-bottom:14px}
+.ps-title{
+  font-size:9px;font-weight:700;letter-spacing:.1em;color:var(--t3);
+  margin-bottom:8px;padding-bottom:5px;border-bottom:1px solid var(--b1);
+}
+.pr{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;gap:6px}
+.pl{font-size:12px;color:var(--t2)}
+.pv{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--acc);min-width:34px;text-align:right}
+input[type=range]{width:100%;accent-color:var(--acc);cursor:pointer}
+input[type=number],input[type=text],select,textarea{
+  background:var(--s3);border:1px solid var(--b2);border-radius:var(--r);
+  color:var(--t1);padding:5px 8px;font-size:12px;
+  font-family:'Outfit',sans-serif;width:100%;
+}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--acc)}
 select{cursor:pointer}
-textarea{resize:vertical;min-height:56px}
-.toggle-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
-.tog{position:relative;width:32px;height:18px;cursor:pointer;flex-shrink:0}
+textarea{resize:vertical;min-height:52px}
+.tog-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px}
+.tog{position:relative;width:30px;height:17px;cursor:pointer;flex-shrink:0}
 .tog input{opacity:0;width:0;height:0}
-.tog-sl{position:absolute;inset:0;background:var(--b3);border-radius:9px;transition:.15s}
-.tog-sl:before{content:'';position:absolute;width:12px;height:12px;left:3px;top:3px;background:var(--t3);border-radius:50%;transition:.15s}
+.tog-sl{position:absolute;inset:0;background:var(--b3);border-radius:8px;transition:.15s}
+.tog-sl::before{content:'';position:absolute;width:11px;height:11px;left:3px;top:3px;background:var(--t3);border-radius:50%;transition:.15s}
 .tog input:checked+.tog-sl{background:var(--acc)}
-.tog input:checked+.tog-sl:before{transform:translateX(14px);background:#000}
-.btn-sm{padding:5px 10px;border-radius:var(--r);border:1px solid var(--b2);background:transparent;color:var(--t2);cursor:pointer;font-size:11px;font-family:'Syne',sans-serif;transition:all .12s}
-.btn-sm:hover{background:var(--s3);color:var(--t1)}
-.btn-danger{border-color:#ff3c6e33;color:var(--acc2)}
-.btn-danger:hover{background:#ff3c6e22}
-.color-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;margin-bottom:8px}
-.color-swatch{width:100%;aspect-ratio:1;border-radius:3px;cursor:pointer;border:2px solid transparent;transition:border-color .1s}
-.color-swatch.sel{border-color:#fff}
-.filter-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:8px}
-.filter-btn{padding:5px 4px;border-radius:var(--r);border:1px solid var(--b2);background:transparent;color:var(--t3);cursor:pointer;font-size:10px;font-family:'Syne',sans-serif;text-align:center;transition:all .12s}
-.filter-btn:hover,.filter-btn.active{background:var(--s3);color:var(--t1);border-color:var(--b3)}
-.transition-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:8px}
-.trans-btn{padding:5px 4px;border-radius:var(--r);border:1px solid var(--b2);background:transparent;color:var(--t3);cursor:pointer;font-size:10px;font-family:'Syne',sans-serif;text-align:center;transition:all .12s}
-.trans-btn:hover,.trans-btn.active{background:var(--s3);color:var(--t1);border-color:var(--b3)}
-.no-sel{padding:30px 20px;text-align:center;color:var(--t4);font-size:12px;line-height:1.7}
+.tog input:checked+.tog-sl::before{transform:translateX(13px);background:#fff}
+.pbtn{
+  padding:5px 10px;border-radius:var(--r);border:1px solid var(--b2);
+  background:transparent;color:var(--t2);cursor:pointer;
+  font-size:11px;font-family:'Outfit',sans-serif;transition:all .12s;
+}
+.pbtn:hover{background:var(--s3);color:var(--t1)}
+.pbtn.del{border-color:rgba(250,108,154,.3);color:var(--acc2)}
+.pbtn.del:hover{background:rgba(250,108,154,.1)}
+.no-sel{padding:28px 16px;text-align:center;color:var(--t4);font-size:12px;line-height:1.8}
+
+/* FILTER PRESETS */
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:8px}
+.fbtn{
+  padding:5px;border-radius:var(--r);border:1px solid var(--b2);
+  background:transparent;color:var(--t3);cursor:pointer;font-size:10px;
+  font-family:'Outfit',sans-serif;text-align:center;transition:all .12s;
+}
+.fbtn:hover,.fbtn.active{background:var(--s3);color:var(--t1);border-color:var(--b3)}
+.tgrid{display:grid;grid-template-columns:1fr 1fr;gap:4px}
+.xbtn{
+  padding:5px;border-radius:var(--r);border:1px solid var(--b2);
+  background:transparent;color:var(--t3);cursor:pointer;font-size:10px;
+  font-family:'Outfit',sans-serif;text-align:center;transition:all .12s;
+}
+.xbtn:hover,.xbtn.active{background:var(--s3);color:var(--t1);border-color:var(--b3)}
 
 /* ── TIMELINE ── */
-#timeline{height:var(--timeline);background:var(--s1);border-top:1px solid var(--b1);display:flex;flex-direction:column;flex-shrink:0}
-#tl-header{display:flex;align-items:center;padding:0 10px;height:30px;border-bottom:1px solid var(--b1);gap:8px}
-.tl-label{font-size:10px;font-weight:600;color:var(--t3);letter-spacing:.08em}
-.tl-zoom{display:flex;align-items:center;gap:4px;margin-left:auto}
-.tl-zoom button{background:transparent;border:1px solid var(--b2);color:var(--t2);width:20px;height:20px;border-radius:3px;cursor:pointer;font-size:13px;line-height:1;display:flex;align-items:center;justify-content:center}
-.tl-zoom button:hover{background:var(--s3);color:var(--t1)}
+#timeline{
+  height:var(--tlH);background:var(--s1);border-top:1px solid var(--b1);
+  display:flex;flex-direction:column;flex-shrink:0;
+}
+#tl-hdr{
+  height:28px;display:flex;align-items:center;
+  padding:0 8px;border-bottom:1px solid var(--b1);gap:6px;flex-shrink:0;
+}
+.tl-title{font-size:9px;font-weight:700;letter-spacing:.1em;color:var(--t3)}
+.zoom-wrap{display:flex;align-items:center;gap:3px;margin-left:auto}
+.zbtn{
+  background:transparent;border:1px solid var(--b2);color:var(--t2);
+  width:18px;height:18px;border-radius:3px;cursor:pointer;font-size:12px;
+  display:flex;align-items:center;justify-content:center;transition:all .1s;
+}
+.zbtn:hover{background:var(--s3);color:var(--t1)}
+.zlabel{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--t3);min-width:26px;text-align:center}
+/* ADD TRACK BTN */
+.add-trk-btn{
+  background:transparent;border:1px solid var(--b2);color:var(--t3);
+  padding:2px 8px;border-radius:4px;cursor:pointer;font-size:10px;
+  font-family:'Outfit',sans-serif;transition:all .12s;
+}
+.add-trk-btn:hover{background:var(--s3);color:var(--t1);border-color:var(--b3)}
 #tl-body{flex:1;display:flex;overflow:hidden}
-#tl-labels{width:80px;flex-shrink:0;overflow:hidden;border-right:1px solid var(--b1)}
-.tl-track-label{height:44px;display:flex;align-items:center;padding:0 8px;gap:5px;font-size:10px;font-weight:600;letter-spacing:.06em;border-bottom:1px solid var(--b1);cursor:default}
-.tl-track-label svg{opacity:.6}
-#tl-scroll{flex:1;overflow-x:auto;overflow-y:hidden;position:relative}
-#tl-scroll::-webkit-scrollbar{height:4px}
-#tl-scroll::-webkit-scrollbar-thumb{background:var(--b3)}
-#tl-inner{position:relative;min-height:100%}
-.tl-track{height:44px;border-bottom:1px solid var(--b1);position:relative}
-.tl-track-bg-v{background:var(--track-v)}
-.tl-track-bg-i{background:var(--track-i)}
-.tl-track-bg-t{background:var(--track-t)}
-.tl-track-bg-a{background:var(--track-a)}
+#tl-labels{width:72px;flex-shrink:0;border-right:1px solid var(--b1);overflow:hidden;background:var(--s2)}
+.tl-row-lbl{
+  height:40px;display:flex;align-items:center;padding:0 8px;gap:4px;
+  font-size:9px;font-weight:700;letter-spacing:.06em;border-bottom:1px solid var(--b1);
+  cursor:default;user-select:none;
+}
+.ruler-lbl{height:20px;border-bottom:1px solid var(--b1)}
+#tl-scroll{flex:1;overflow:auto;position:relative;cursor:default}
+#tl-scroll::-webkit-scrollbar{width:4px;height:4px}
+#tl-scroll::-webkit-scrollbar-thumb{background:var(--b3);border-radius:2px}
+#tl-inner{position:relative;min-width:100%}
 
 /* RULER */
-#tl-ruler{height:18px;background:var(--s2);border-bottom:1px solid var(--b1);position:sticky;top:0;z-index:10;pointer-events:none}
+#ruler-canvas{display:block;position:sticky;top:0;z-index:30;cursor:crosshair}
 
+/* TRACK ROWS */
+.tl-track{
+  height:40px;position:relative;border-bottom:1px solid var(--b1);
+  overflow:visible;
+}
 /* CLIP BLOCKS */
-.clip-block{position:absolute;top:3px;height:38px;border-radius:5px;overflow:hidden;cursor:pointer;user-select:none;display:flex;align-items:center;border:1.5px solid transparent;transition:border-color .1s;z-index:2}
-.clip-block:hover{border-color:rgba(255,255,255,.3)}
-.clip-block.sel{border-color:var(--acc) !important;z-index:5}
-.clip-block-bg-v{background:linear-gradient(180deg,#2a4a2a,#1e3a1e)}
-.clip-block-bg-i{background:linear-gradient(180deg,#2a2a4a,#1e1e3a)}
-.clip-block-bg-t{background:linear-gradient(180deg,#4a2a2a,#3a1e1e)}
-.clip-block-bg-a{background:linear-gradient(180deg,#2a4a4a,#1e3a3a)}
-.clip-thumb-img{height:100%;width:auto;object-fit:cover;pointer-events:none;opacity:.6}
-.clip-label{position:absolute;left:5px;right:5px;font-size:9px;font-family:'IBM Plex Mono',monospace;color:rgba(255,255,255,.8);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none}
-.clip-label.top{top:4px}
-.clip-label.bot{bottom:4px;font-size:8px;opacity:.6}
-.clip-resize-l,.clip-resize-r{position:absolute;top:0;bottom:0;width:6px;background:rgba(255,255,255,.2);cursor:ew-resize;z-index:10}
-.clip-resize-l{left:0;border-radius:5px 0 0 5px}
-.clip-resize-r{right:0;border-radius:0 5px 5px 0}
-.tl-playhead{position:absolute;top:0;bottom:0;width:1.5px;background:var(--acc);pointer-events:none;z-index:20}
-.tl-playhead::before{content:'▼';position:absolute;top:-2px;left:-5px;font-size:10px;color:var(--acc)}
+.cb{
+  position:absolute;top:3px;height:34px;border-radius:5px;
+  cursor:pointer;user-select:none;overflow:hidden;
+  border:1.5px solid transparent;transition:border-color .1s;z-index:2;
+  display:flex;align-items:center;
+}
+.cb:hover{border-color:rgba(255,255,255,.25)}
+.cb.sel{border-color:var(--acc)!important;z-index:5}
+.cb-thumb{height:100%;width:auto;object-fit:cover;opacity:.55;pointer-events:none;flex-shrink:0}
+.cb-lbl{
+  position:absolute;inset:0;padding:2px 6px;
+  display:flex;flex-direction:column;justify-content:center;
+  pointer-events:none;
+}
+.cb-name{font-size:9px;font-family:'JetBrains Mono',monospace;color:rgba(255,255,255,.85);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cb-dur{font-size:8px;color:rgba(255,255,255,.45);font-family:'JetBrains Mono',monospace}
+.cb-rz{position:absolute;top:0;bottom:0;width:7px;cursor:ew-resize;z-index:10;background:rgba(255,255,255,.15)}
+.cb-rz-l{left:0;border-radius:5px 0 0 5px}
+.cb-rz-r{right:0;border-radius:0 5px 5px 0}
+/* TRACK COLORS */
+.tk0{background:linear-gradient(180deg,#1a2e22,#111e16)}
+.tk1{background:linear-gradient(180deg,#1a1e2e,#11151e)}
+.tk2{background:linear-gradient(180deg,#2e1a22,#1e1116)}
+.tk3{background:linear-gradient(180deg,#1a2a2e,#111a1e)}
+.tk4{background:linear-gradient(180deg,#2e2a1a,#1e1a11)}
+.tk5{background:linear-gradient(180deg,#2a1a2e,#1a111e)}
+.cb-v0{background:linear-gradient(180deg,#1e3d28,#142a1c)}
+.cb-v1{background:linear-gradient(180deg,#1e2840,#12192a)}
+.cb-v2{background:linear-gradient(180deg,#3d1e2a,#2a1218)}
+.cb-v3{background:linear-gradient(180deg,#1e302e,#122020)}
+.cb-v4{background:linear-gradient(180deg,#302e1e,#201e12)}
+.cb-v5{background:linear-gradient(180deg,#2a1e36,#1c1224)}
+.cb-audio{background:linear-gradient(180deg,#1e3030,#0e1e1e)}
+.cb-txt{background:linear-gradient(180deg,#301e30,#200e20)}
 
-/* ── MODALS ── */
-.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:200;display:none;align-items:center;justify-content:center}
+/* PLAYHEAD */
+#playhead{
+  position:absolute;top:0;bottom:0;width:2px;
+  background:var(--acc2);z-index:50;pointer-events:none;
+}
+#playhead::before{
+  content:'';position:absolute;top:0;left:-5px;
+  border:6px solid transparent;border-top-color:var(--acc2);
+  border-bottom:none;
+}
+#playhead::after{
+  content:'';position:absolute;top:0;left:-5px;
+  width:12px;height:12px;background:var(--acc2);border-radius:50%;
+  top:-2px;
+}
+/* Playhead draggable zone */
+#ph-drag{
+  position:absolute;top:0;width:12px;transform:translateX(-50%);
+  cursor:ew-resize;z-index:60;background:transparent;
+}
+
+/* CUT INDICATOR */
+.cut-indicator{
+  position:absolute;top:0;bottom:0;width:2px;
+  background:rgba(250,204,108,.6);z-index:40;pointer-events:none;
+  border:none;
+}
+
+/* CONTEXT MENU */
+#ctx-menu{
+  position:fixed;background:var(--s2);border:1px solid var(--b2);
+  border-radius:var(--r2);padding:4px;z-index:1000;display:none;
+  box-shadow:0 8px 30px rgba(0,0,0,.7);min-width:160px;
+}
+.ctx-item{
+  padding:6px 12px;border-radius:var(--r);cursor:pointer;font-size:12px;
+  color:var(--t2);display:flex;align-items:center;gap:8px;transition:all .1s;
+}
+.ctx-item:hover{background:var(--s3);color:var(--t1)}
+.ctx-item.danger{color:var(--acc2)}
+.ctx-item.danger:hover{background:rgba(250,108,154,.1)}
+.ctx-sep{height:1px;background:var(--b2);margin:3px 0}
+
+/* ── MODAL ── */
+.modal-bg{
+  position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:500;
+  display:none;align-items:center;justify-content:center;
+}
 .modal-bg.open{display:flex}
-.modal{background:var(--s2);border:1px solid var(--b2);border-radius:var(--r2);padding:24px;width:400px;max-width:94vw}
-.modal h3{font-size:16px;font-weight:700;margin-bottom:4px;color:var(--t1)}
-.modal p{font-size:12px;color:var(--t2);margin-bottom:18px}
-.modal-row{margin-bottom:12px}
-.modal-row label{display:block;font-size:10px;font-weight:600;color:var(--t3);margin-bottom:5px;letter-spacing:.08em}
-.modal-actions{display:flex;gap:8px;margin-top:18px}
-.modal-actions .btn-sm{flex:1;padding:8px;text-align:center;font-size:12px}
-.btn-acc{background:var(--acc);color:#000;border-color:var(--acc);font-weight:700}
-.btn-acc:hover{background:#fff;border-color:#fff}
-.export-bar{height:5px;background:var(--b2);border-radius:3px;overflow:hidden;margin-top:10px}
-.export-bar-fill{height:100%;background:var(--acc);width:0%;transition:width .3s;border-radius:3px}
-.export-log{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--t2);margin-top:8px;height:60px;overflow-y:auto;background:var(--s1);border-radius:var(--r);padding:6px 8px}
+.modal{
+  background:var(--s2);border:1px solid var(--b2);border-radius:var(--r3);
+  padding:24px;width:420px;max-width:95vw;
+}
+.modal h3{font-size:15px;font-weight:700;margin-bottom:4px}
+.modal p{font-size:11px;color:var(--t2);margin-bottom:16px}
+.mrow{margin-bottom:10px}
+.mrow label{display:block;font-size:9px;font-weight:700;letter-spacing:.09em;color:var(--t3);margin-bottom:4px}
+.macts{display:flex;gap:6px;margin-top:16px}
+.macts .pbtn{flex:1;padding:8px;text-align:center;font-size:12px}
+.macts .acc{background:var(--acc);color:#fff;border-color:var(--acc);font-weight:700}
+.macts .acc:hover{background:#9c8cff}
+.exp-bar{height:4px;background:var(--b2);border-radius:2px;overflow:hidden;margin-top:10px}
+.exp-fill{height:100%;background:linear-gradient(90deg,var(--acc),var(--acc2));width:0%;transition:width .25s;border-radius:2px}
+.exp-log{
+  font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--t2);
+  margin-top:8px;height:64px;overflow-y:auto;background:var(--bg);
+  border-radius:var(--r);padding:6px 8px;line-height:1.6;
+}
 
-/* STATUS */
-#statusbar{height:22px;display:flex;align-items:center;gap:8px;padding:0 14px;background:var(--s1);border-top:1px solid var(--b1);font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--t3);position:fixed;bottom:0;left:0;right:0}
-.sdot{width:5px;height:5px;border-radius:50%;background:var(--acc);flex-shrink:0}
-.sdot.busy{animation:blink 1s infinite;background:var(--acc2)}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+/* STATUSBAR */
+#statusbar{
+  height:20px;display:flex;align-items:center;gap:8px;
+  padding:0 14px;background:var(--s1);border-top:1px solid var(--b1);
+  font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--t3);
+  position:fixed;bottom:0;left:0;right:0;z-index:100;
+}
+.sdot{width:5px;height:5px;border-radius:50%;background:var(--acc3);flex-shrink:0}
+.sdot.busy{animation:pulse .9s infinite;background:var(--acc4)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.2}}
 
-/* SCROLLBAR global */
+/* SCROLL */
 ::-webkit-scrollbar{width:4px;height:4px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--b2);border-radius:2px}
-
-/* TEXT OVERLAY on canvas */
-.txt-overlay{position:absolute;cursor:move;padding:4px 8px;border-radius:3px;font-family:'Syne',sans-serif;font-weight:700;white-space:pre;border:1.5px solid transparent;user-select:none;line-height:1.2}
-.txt-overlay:hover,.txt-overlay.sel{border-color:var(--acc2)}
-
-/* IMG OVERLAY on canvas */
-.img-overlay{position:absolute;cursor:move;border:1.5px solid transparent;user-select:none}
-.img-overlay:hover,.img-overlay.sel{border-color:var(--acc3)}
-.img-overlay img{width:100%;height:100%;object-fit:contain;display:block;pointer-events:none}
-.overlay-controls{position:absolute;top:-22px;left:0;display:none;gap:3px}
-.img-overlay.sel .overlay-controls,.txt-overlay.sel .overlay-controls{display:flex}
-.ov-ctrl-btn{background:var(--s2);border:1px solid var(--b3);color:var(--t1);font-size:9px;padding:2px 5px;border-radius:3px;cursor:pointer;font-family:'Syne',sans-serif}
-.ov-ctrl-btn:hover{background:var(--s3)}
-.resize-handle{position:absolute;bottom:-5px;right:-5px;width:10px;height:10px;background:var(--acc);border-radius:50%;cursor:se-resize}
 </style>
 </head>
 <body>
 
-<!-- TOP BAR -->
+<!-- SPLASH -->
+<div id="splash">
+  <div class="sp-logo">CUTFLOW</div>
+  <div class="sp-tag">VIDEO EDITOR PRO</div>
+  <div class="sp-bar-wrap"><div class="sp-bar"></div></div>
+  <div class="sp-dots">
+    <div class="sp-dot"></div>
+    <div class="sp-dot"></div>
+    <div class="sp-dot"></div>
+  </div>
+</div>
+
+<!-- TOPBAR -->
 <div id="topbar">
   <div class="logo">CUTFLOW</div>
-  <div class="sep"></div>
-  <button class="tb-btn" onclick="document.getElementById('fileInput').click()" title="Importar mídia">
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+  <div class="tb-sep"></div>
+  <button class="tb-btn" onclick="triggerImport()">
+    <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
     Importar
   </button>
-  <button class="tb-btn" onclick="addTextOverlay()" title="Adicionar texto">
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7V4h16v3M9 20h6M12 4v16"/></svg>
+  <button class="tb-btn" onclick="addTextOverlay()">
+    <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 7V4h16v3M12 4v16M9 20h6"/></svg>
     Texto
   </button>
-  <button class="tb-btn" id="playbackBtn" onclick="togglePlay()">
-    <svg id="topPlayIcon" width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-    <span id="topPlayLabel">Play</span>
+  <button class="tb-btn" onclick="addVideoTrack()">
+    <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+    + Camada
   </button>
-  <div class="sep"></div>
-  <div class="time-code" id="timeCode">00:00.00</div>
+  <div class="tb-sep"></div>
+  <!-- FORMAT SELECTOR -->
+  <div class="fmt-group">
+    <button class="fmt-btn active" onclick="setFormat('9:16',this)" title="TikTok/Reels">9:16</button>
+    <button class="fmt-btn" onclick="setFormat('1:1',this)" title="Instagram feed">1:1</button>
+    <button class="fmt-btn" onclick="setFormat('4:5',this)" title="Instagram retrato">4:5</button>
+    <button class="fmt-btn" onclick="setFormat('16:9',this)" title="YouTube">16:9</button>
+  </div>
+  <div class="tb-sep"></div>
+  <div class="timecode" id="timecode">00:00.00</div>
   <div class="spacer"></div>
-  <span style="font-size:11px;color:var(--t3);font-family:'IBM Plex Mono',monospace" id="clipCountLabel">0 clips</span>
-  <div class="sep"></div>
-  <button class="export-btn" id="exportBtn" onclick="openExport()" disabled>
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+  <span id="clipcnt" style="font-size:10px;color:var(--t3);font-family:'JetBrains Mono',monospace">0 clips</span>
+  <div class="tb-sep"></div>
+  <button class="export-btn" id="expBtn" onclick="openExport()" disabled>
+    <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
     EXPORTAR
   </button>
 </div>
 
-<!-- MAIN -->
-<div id="main">
+<!-- APP BODY -->
+<div id="app">
 
-  <!-- MEDIA PANEL -->
-  <div id="mediapanel">
-    <div class="panel-tabs">
-      <div class="ptab active" onclick="switchTab('media',this)">MÍDIA</div>
-      <div class="ptab" onclick="switchTab('audio',this)">ÁUDIO</div>
-      <div class="ptab" onclick="switchTab('effects',this)">EFEITOS</div>
+  <!-- SIDEBAR -->
+  <div id="sidebar">
+    <div class="stabs">
+      <div class="stab active" onclick="stab('media',this)">MÍDIA</div>
+      <div class="stab" onclick="stab('audio',this)">ÁUDIO</div>
+      <div class="stab" onclick="stab('fx',this)">EFEITOS</div>
     </div>
-    <div class="panel-body" id="panelMedia">
-      <div class="dropzone" id="dropzone" onclick="document.getElementById('fileInput').click()">
-        <div class="dropzone-icon">⬆</div>
-        <p><strong>Clique ou arraste</strong><br>vídeos e imagens</p>
+    <div class="sbody" id="sbMedia">
+      <div class="dz" id="dz" onclick="triggerImport()">
+        <div class="dz-icon">⬆</div>
+        <p><strong>Clique ou arraste</strong><br>vídeos e imagens<br>aqui</p>
       </div>
-      <div class="media-grid" id="mediaGrid"></div>
+      <div class="mgrid" id="mgrid"></div>
       <input type="file" id="fileInput" multiple accept="video/*,image/*" style="display:none" onchange="handleFiles(this.files)">
     </div>
-    <div class="panel-body" id="panelAudio" style="display:none">
-      <div class="dropzone" onclick="document.getElementById('audioInput').click()">
-        <div class="dropzone-icon">♪</div>
-        <p><strong>Clique para adicionar</strong><br>música de fundo (MP3, WAV)</p>
+    <div class="sbody" id="sbAudio" style="display:none">
+      <div class="dz" onclick="document.getElementById('audioIn').click()">
+        <div class="dz-icon">♪</div>
+        <p><strong>Adicionar música</strong><br>MP3, WAV, AAC</p>
       </div>
-      <input type="file" id="audioInput" accept="audio/*" style="display:none" onchange="handleAudioFile(this.files)">
-      <div id="audioList"></div>
+      <input type="file" id="audioIn" accept="audio/*" style="display:none" onchange="handleAudio(this.files)">
+      <div id="audioSlot"></div>
     </div>
-    <div class="panel-body" id="panelEffects" style="display:none">
-      <div style="font-size:10px;color:var(--t3);margin-bottom:8px;font-weight:600;letter-spacing:.08em">FILTROS DE COR</div>
-      <div class="filter-grid">
-        <button class="filter-btn" onclick="applyFilterPreset('none',this)">Original</button>
-        <button class="filter-btn" onclick="applyFilterPreset('vivid',this)">Vivid</button>
-        <button class="filter-btn" onclick="applyFilterPreset('cold',this)">Cold</button>
-        <button class="filter-btn" onclick="applyFilterPreset('warm',this)">Warm</button>
-        <button class="filter-btn" onclick="applyFilterPreset('bw',this)">P&B</button>
-        <button class="filter-btn" onclick="applyFilterPreset('fade',this)">Fade</button>
-        <button class="filter-btn" onclick="applyFilterPreset('retro',this)">Retro</button>
-        <button class="filter-btn" onclick="applyFilterPreset('neon',this)">Neon</button>
+    <div class="sbody" id="sbFx" style="display:none">
+      <div style="font-size:9px;font-weight:700;letter-spacing:.1em;color:var(--t3);margin-bottom:6px">FILTROS</div>
+      <div class="fgrid">
+        <button class="fbtn active" onclick="applyFxPreset('none',this)">Original</button>
+        <button class="fbtn" onclick="applyFxPreset('vivid',this)">Vivid</button>
+        <button class="fbtn" onclick="applyFxPreset('cold',this)">Cold</button>
+        <button class="fbtn" onclick="applyFxPreset('warm',this)">Warm</button>
+        <button class="fbtn" onclick="applyFxPreset('bw',this)">P&B</button>
+        <button class="fbtn" onclick="applyFxPreset('fade',this)">Fade</button>
+        <button class="fbtn" onclick="applyFxPreset('retro',this)">Retro</button>
+        <button class="fbtn" onclick="applyFxPreset('neon',this)">Neon</button>
+        <button class="fbtn" onclick="applyFxPreset('dream',this)">Dream</button>
+        <button class="fbtn" onclick="applyFxPreset('punch',this)">Punch</button>
       </div>
-      <div style="font-size:10px;color:var(--t3);margin:10px 0 8px;font-weight:600;letter-spacing:.08em">TRANSIÇÕES</div>
-      <div class="transition-grid">
-        <button class="trans-btn active" onclick="setTransition('none',this)">Corte</button>
-        <button class="trans-btn" onclick="setTransition('fade',this)">Fade</button>
-        <button class="trans-btn" onclick="setTransition('zoom',this)">Zoom in</button>
-        <button class="trans-btn" onclick="setTransition('slide',this)">Slide</button>
-        <button class="trans-btn" onclick="setTransition('wipe',this)">Wipe</button>
-        <button class="trans-btn" onclick="setTransition('flash',this)">Flash</button>
+      <div style="font-size:9px;font-weight:700;letter-spacing:.1em;color:var(--t3);margin:10px 0 6px">TRANSIÇÕES</div>
+      <div class="tgrid">
+        <button class="xbtn active" onclick="setGlobalTrans('none',this)">Corte</button>
+        <button class="xbtn" onclick="setGlobalTrans('fade',this)">Fade</button>
+        <button class="xbtn" onclick="setGlobalTrans('zoom',this)">Zoom</button>
+        <button class="xbtn" onclick="setGlobalTrans('slide',this)">Slide</button>
+        <button class="xbtn" onclick="setGlobalTrans('wipe',this)">Wipe</button>
+        <button class="xbtn" onclick="setGlobalTrans('flash',this)">Flash</button>
       </div>
-      <div style="font-size:10px;color:var(--t3);margin:10px 0 8px;font-weight:600;letter-spacing:.08em">ANIMAÇÃO DE TEXTO</div>
-      <div class="filter-grid">
-        <button class="filter-btn" onclick="setTextAnim('none',this)">Nenhum</button>
-        <button class="filter-btn" onclick="setTextAnim('fadein',this)">Fade in</button>
-        <button class="filter-btn" onclick="setTextAnim('slidein',this)">Slide in</button>
-        <button class="filter-btn" onclick="setTextAnim('pop',this)">Pop</button>
+      <div style="font-size:9px;font-weight:700;letter-spacing:.1em;color:var(--t3);margin:10px 0 6px">ANIMAÇÃO TEXTO</div>
+      <div class="tgrid">
+        <button class="xbtn active" onclick="setTxtAnim('none',this)">Nenhuma</button>
+        <button class="xbtn" onclick="setTxtAnim('fadein',this)">Fade in</button>
+        <button class="xbtn" onclick="setTxtAnim('slidein',this)">Slide in</button>
+        <button class="xbtn" onclick="setTxtAnim('pop',this)">Pop</button>
+        <button class="xbtn" onclick="setTxtAnim('typewriter',this)">Typewriter</button>
+        <button class="xbtn" onclick="setTxtAnim('bounce',this)">Bounce</button>
       </div>
     </div>
   </div>
@@ -307,1103 +598,1368 @@ textarea{resize:vertical;min-height:56px}
   <!-- PREVIEW -->
   <div id="preview-wrap">
     <div id="preview-area">
-      <div id="preview-empty">
-        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="2" y="2" width="20" height="20" rx="3"/><path d="M10 8l6 4-6 4V8z"/></svg>
-        <span>Adicione clips à timeline</span>
-      </div>
-      <div id="canvas-wrap" style="display:none;position:relative">
+      <div id="cvwrap">
         <canvas id="mainCanvas"></canvas>
-        <!-- overlays rendered here as DOM -->
+        <div class="cv-empty" id="cvempty">
+          <svg width="52" height="52" fill="none" stroke="currentColor" stroke-width="1" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="3"/><path d="M10 8l6 4-6 4V8z"/></svg>
+          <span>Adicione clips à timeline</span>
+        </div>
+        <div class="fmt-label" id="fmtLabel">9:16</div>
       </div>
     </div>
     <div id="playbar">
       <button class="play-btn" onclick="togglePlay()">
-        <svg id="playIcon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        <svg id="playIcon" width="13" height="13" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
       </button>
-      <div class="prog-track" id="progTrack" onclick="seekClick(event)">
-        <div class="prog-fill" id="progFill" style="width:0%"></div>
-        <div class="prog-head" id="progHead" style="left:0%"></div>
+      <div class="ptrack" id="ptrack" onclick="seekClick(event)">
+        <div class="pfill" id="pfill" style="width:0%"></div>
+        <div class="phead" id="phead" style="left:0%"></div>
       </div>
-      <div class="vol-row">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H2v6h4l5 4V5zM19.07 4.93a10 10 0 010 14.14M15.54 8.46a5 5 0 010 7.07"/></svg>
-        <input type="range" class="vol" id="masterVol" min="0" max="100" value="80" title="Volume master">
+      <div class="vol-wrap">
+        <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 5L6 9H2v6h4l5 4V5zM19.07 4.93a10 10 0 010 14.14"/></svg>
+        <input type="range" class="vol" id="mvol" min="0" max="100" value="80">
       </div>
     </div>
   </div>
 
-  <!-- PROPERTIES -->
-  <div id="propspanel">
-    <div class="panel-title">PROPRIEDADES</div>
+  <!-- PROPS -->
+  <div id="props">
+    <div class="props-hdr">
+      <span>PROPRIEDADES</span>
+      <span id="propsSubtitle" style="font-size:9px;color:var(--t4)">–</span>
+    </div>
     <div id="props-body">
-      <div class="no-sel" id="noSelMsg">Selecione um clip<br>ou elemento para editar</div>
-      <div id="clipPropsArea" style="display:none"></div>
+      <div class="no-sel" id="nosel">Selecione um clip<br>ou elemento</div>
+      <div id="proparea" style="display:none"></div>
     </div>
   </div>
 </div>
 
 <!-- TIMELINE -->
 <div id="timeline">
-  <div id="tl-header">
-    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></svg>
-    <span class="tl-label">TIMELINE</span>
-    <div class="tl-zoom">
-      <button onclick="zoomTL(-1)">−</button>
-      <span style="font-size:10px;color:var(--t3);font-family:'IBM Plex Mono',monospace;min-width:28px;text-align:center" id="zoomLabel">1×</span>
-      <button onclick="zoomTL(1)">+</button>
+  <div id="tl-hdr">
+    <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></svg>
+    <span class="tl-title">TIMELINE</span>
+    <button class="add-trk-btn" onclick="addVideoTrack()" style="margin-left:6px">+ camada vídeo</button>
+    <div class="zoom-wrap">
+      <button class="zbtn" onclick="zoom(-1)">−</button>
+      <span class="zlabel" id="zlabel">1×</span>
+      <button class="zbtn" onclick="zoom(1)">+</button>
     </div>
   </div>
   <div id="tl-body">
-    <div id="tl-labels">
-      <div style="height:18px;border-bottom:1px solid var(--b1)"></div>
-      <div class="tl-track-label" style="color:#6aaa6a">
-        <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>VIDEO
-      </div>
-      <div class="tl-track-label" style="color:#6a6aaa">
-        <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>IMAGEM
-      </div>
-      <div class="tl-track-label" style="color:#aa6a6a">
-        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 7V4h16v3M12 4v16"/></svg>TEXTO
-      </div>
-      <div class="tl-track-label" style="color:#6aaaaa">
-        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13M9 18a3 3 0 11-6 0 3 3 0 016 0z"/></svg>ÁUDIO
-      </div>
+    <div id="tl-labels" id="tl-labels">
+      <div class="ruler-lbl"></div>
+      <!-- track labels injected here -->
     </div>
     <div id="tl-scroll">
       <div id="tl-inner">
-        <canvas id="tl-ruler" height="18"></canvas>
-        <div class="tl-track tl-track-bg-v" id="track-v" ondragover="tlDragOver(event,'v')" ondrop="tlDrop(event,'v')"></div>
-        <div class="tl-track tl-track-bg-i" id="track-i" ondragover="tlDragOver(event,'i')" ondrop="tlDrop(event,'i')"></div>
-        <div class="tl-track tl-track-bg-t" id="track-t" ondragover="tlDragOver(event,'t')" ondrop="tlDrop(event,'t')"></div>
-        <div class="tl-track tl-track-bg-a" id="track-a" ondragover="tlDragOver(event,'a')" ondrop="tlDrop(event,'a')"></div>
-        <div class="tl-playhead" id="playhead" style="left:0"></div>
+        <canvas id="ruler-canvas" height="20"></canvas>
+        <!-- track rows injected here -->
+        <div id="playhead" style="left:0"></div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- STATUS BAR -->
+<!-- STATUS -->
 <div id="statusbar">
   <div class="sdot" id="sdot"></div>
-  <span id="statusTxt">Pronto</span>
-  <span style="margin-left:auto" id="totalDurStat">Total: 0:00</span>
+  <span id="stxt">Pronto — clique direito na timeline para cortar</span>
+  <span style="margin-left:auto;font-family:'JetBrains Mono',monospace" id="totaldur">Total: 0:00</span>
+</div>
+
+<!-- CONTEXT MENU -->
+<div id="ctx-menu">
+  <div class="ctx-item" id="ctx-cut" onclick="ctxCut()">
+    <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M20 4L8.12 15.88M14.47 14.48L20 20M8.12 8.12L12 12"/></svg>
+    Cortar aqui
+  </div>
+  <div class="ctx-item" id="ctx-dup" onclick="ctxDuplicate()">
+    <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+    Duplicar clip
+  </div>
+  <div class="ctx-sep"></div>
+  <div class="ctx-item danger" id="ctx-del" onclick="ctxDelete()">
+    <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg>
+    Excluir clip
+  </div>
 </div>
 
 <!-- EXPORT MODAL -->
-<div class="modal-bg" id="exportModal">
+<div class="modal-bg" id="expModal">
   <div class="modal">
     <h3>Exportar Vídeo</h3>
-    <p id="exportDesc">Renderiza e baixa direto no browser</p>
-    <div class="modal-row">
+    <p id="expDesc">Renderização direta no browser</p>
+    <div class="mrow">
       <label>RESOLUÇÃO</label>
       <select id="resSelect">
-        <option value="1080">1080p — 1080×1920</option>
-        <option value="720" selected>720p — 720×1280</option>
+        <option value="1080">1080p</option>
+        <option value="720" selected>720p</option>
         <option value="480">480p — rápido</option>
       </select>
     </div>
-    <div class="modal-row">
+    <div class="mrow">
       <label>FPS</label>
       <select id="fpsSelect">
         <option value="30" selected>30 fps</option>
         <option value="60">60 fps</option>
       </select>
     </div>
-    <div class="export-bar"><div class="export-bar-fill" id="expBarFill"></div></div>
-    <div class="export-log" id="expLog"></div>
-    <div class="modal-actions" id="expActions">
-      <button class="btn-sm" onclick="closeExport()">Cancelar</button>
-      <button class="btn-sm btn-acc" id="startExpBtn" onclick="startExport()">Exportar</button>
+    <div class="exp-bar"><div class="exp-fill" id="expfill"></div></div>
+    <div class="exp-log" id="explog"></div>
+    <div class="macts" id="expacts">
+      <button class="pbtn" onclick="closeExport()">Cancelar</button>
+      <button class="pbtn acc" id="startExpBtn" onclick="startExport()">Exportar</button>
     </div>
-    <div id="expDownload" style="display:none;margin-top:14px;text-align:center">
-      <div style="color:#6aaa6a;font-weight:600;margin-bottom:10px;font-size:13px">✓ Concluído!</div>
-      <a id="dlLink" class="btn-sm btn-acc" style="display:block;text-align:center;text-decoration:none;padding:9px" download="cutflow.webm">⬇ Baixar Vídeo</a>
-      <button class="btn-sm" style="width:100%;margin-top:6px" onclick="closeExport()">Fechar</button>
+    <div id="expdl" style="display:none;margin-top:12px;text-align:center">
+      <div style="color:var(--acc3);font-weight:600;margin-bottom:8px">✓ Pronto!</div>
+      <a id="dllink" class="pbtn acc" style="display:block;text-align:center;text-decoration:none;padding:9px" download="cutflow.webm">⬇ Baixar Vídeo</a>
+      <button class="pbtn" style="width:100%;margin-top:5px" onclick="closeExport()">Fechar</button>
     </div>
   </div>
 </div>
 
 <script>
-// ═══════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════
 // STATE
-// ═══════════════════════════════════════════════════════
-const state = {
-  media: [],           // {id, type:'video'|'image'|'audio', file, url, duration, thumb, el}
-  clips: {             // {v:[],i:[],t:[],a:[]}
-    v: [], i: [], t: [], a: []
-  },
-  overlays: [],        // {id, type:'text'|'image', ...} — draggable on canvas
-  selectedClip: null,  // {track, id}
-  selectedOverlay: null,
-  isPlaying: false,
-  playTime: 0,
-  totalDur: 0,
-  zoom: 1,             // px per second
-  pxPerSec: 80,
-  transition: 'none',
-  textAnim: 'none',
-  audioTrack: null,    // {file, url, volume, fade}
-  raf: null,
-  lastFrameT: null
+// ════════════════════════════════════════════════════════
+let uid = 0;
+const id = () => ++uid;
+
+// FORMAT CONFIG
+const FORMATS = {
+  '9:16':{w:360,h:640,label:'9:16 · TikTok'},
+  '1:1':{w:480,h:480,label:'1:1 · Instagram'},
+  '4:5':{w:432,h:540,label:'4:5 · Instagram'},
+  '16:9':{w:640,h:360,label:'16:9 · YouTube'},
 };
+let curFmt = '9:16';
 
-const PW = 360, PH = 640; // preview canvas size
+// TIMELINE TRACKS: array of {id, type:'video'|'image'|'audio'|'text', clips:[]}
+// We start with: video0, image0, text0, audio0
+const tracks = [];
+let pxPerSec = 80;
+let playTime = 0;
+let totalDur = 0;
+let isPlaying = false;
+let raf = null;
+let lastT = null;
+let globalTransition = 'none';
+let globalTxtAnim = 'none';
+
+const media = []; // {id, type, file, url, duration, thumb, el}
+
+// OVERLAYS (draggable on canvas)
+const overlays = []; // {id, type:'text'|'img', ...}
+
+let selClip = null;  // {trackId, clipId}
+let selOv   = null;  // overlay id
+let ctxTarget = null; // for context menu
+
+// Playhead drag
+let phDragging = false;
+let phDragStartX = 0;
+let phDragStartTime = 0;
+
 const canvas = document.getElementById('mainCanvas');
-const ctx2 = canvas.getContext('2d');
-canvas.width = PW; canvas.height = PH;
+const ctx = canvas.getContext('2d');
 
-let nextId = 1;
-function uid(){ return nextId++; }
+// ════════════════════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════════════════════
+function init() {
+  setFormat('9:16', document.querySelector('.fmt-btn.active'));
+  addTrack('video');
+  addTrack('image');
+  addTrack('text');
+  addTrack('audio');
+  renderTrackLabels();
+  renderTL();
+  setupDZ();
+  setupContextMenu();
+  setupPlayheadDrag();
+  setupProgDrag();
+}
 
-// ═══════════════════════════════════════════════════════
-// TABS
-// ═══════════════════════════════════════════════════════
-function switchTab(tab, el) {
-  document.querySelectorAll('.ptab').forEach(t=>t.classList.remove('active'));
-  el.classList.add('active');
-  ['media','audio','effects'].forEach(id => {
-    document.getElementById('panel'+id.charAt(0).toUpperCase()+id.slice(1)).style.display = id===tab?'block':'none';
+// ════════════════════════════════════════════════════════
+// FORMAT
+// ════════════════════════════════════════════════════════
+function setFormat(fmt, btn) {
+  curFmt = fmt;
+  document.querySelectorAll('.fmt-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const f = FORMATS[fmt];
+  canvas.width = f.w; canvas.height = f.h;
+  document.getElementById('fmtLabel').textContent = f.label;
+  fitCanvas();
+  renderCanvas();
+}
+
+function fitCanvas() {
+  const area = document.getElementById('preview-area');
+  const aW = area.clientWidth - 40, aH = area.clientHeight - 40;
+  const f = FORMATS[curFmt];
+  const scale = Math.min(aW/f.w, aH/f.h, 1);
+  canvas.style.width  = Math.round(f.w*scale)+'px';
+  canvas.style.height = Math.round(f.h*scale)+'px';
+  document.getElementById('cvwrap').style.width  = canvas.style.width;
+  document.getElementById('cvwrap').style.height = canvas.style.height;
+}
+window.addEventListener('resize', fitCanvas);
+
+// ════════════════════════════════════════════════════════
+// TRACKS
+// ════════════════════════════════════════════════════════
+function addTrack(type) {
+  tracks.push({id:id(), type, clips:[]});
+}
+function addVideoTrack() {
+  addTrack('video');
+  renderTrackLabels();
+  renderTL();
+  setStatus('Nova camada de vídeo adicionada');
+}
+
+const TRACK_COLORS = [
+  {bg:'tk0',cb:'cb-v0',accent:'#22aa7a'},
+  {bg:'tk1',cb:'cb-v1',accent:'#6c7afa'},
+  {bg:'tk2',cb:'cb-v2',accent:'#fa6caa'},
+  {bg:'tk3',cb:'cb-v3',accent:'#6ccafa'},
+  {bg:'tk4',cb:'cb-v4',accent:'#facc6c'},
+  {bg:'tk5',cb:'cb-v5',accent:'#cc6cfa'},
+];
+
+function trackColor(type, idx) {
+  if(type==='audio') return {bg:'tk3',cb:'cb-audio',accent:'#6ccafa'};
+  if(type==='text')  return {bg:'tk2',cb:'cb-txt',accent:'#fa6caa'};
+  if(type==='image') return {bg:'tk1',cb:'cb-v1',accent:'#6c7afa'};
+  return TRACK_COLORS[idx % TRACK_COLORS.length];
+}
+
+function renderTrackLabels() {
+  const labels = document.getElementById('tl-labels');
+  labels.innerHTML = '<div class="ruler-lbl"></div>';
+  const videoTracks = tracks.filter(t=>t.type==='video');
+  tracks.forEach((t,i) => {
+    const c = trackColor(t.type, videoTracks.indexOf(t));
+    const icons = {video:'▶',image:'◼',text:'T',audio:'♪'};
+    const names = {video:'VID',image:'IMG',text:'TXT',audio:'AUD'};
+    const d = document.createElement('div');
+    d.className = 'tl-row-lbl';
+    d.style.color = c.accent;
+    d.innerHTML = `<span style="font-size:11px">${icons[t.type]}</span><span>${names[t.type]}</span>`;
+    labels.appendChild(d);
   });
 }
 
-// ═══════════════════════════════════════════════════════
-// FILE HANDLING
-// ═══════════════════════════════════════════════════════
-const dropzone = document.getElementById('dropzone');
-dropzone.addEventListener('dragover', e=>{e.preventDefault();dropzone.classList.add('over');});
-dropzone.addEventListener('dragleave', ()=>dropzone.classList.remove('over'));
-dropzone.addEventListener('drop', e=>{e.preventDefault();dropzone.classList.remove('over');handleFiles(e.dataTransfer.files);});
+// ════════════════════════════════════════════════════════
+// DROPZONE & IMPORT
+// ════════════════════════════════════════════════════════
+function setupDZ() {
+  const dz = document.getElementById('dz');
+  dz.addEventListener('dragover', e=>{e.preventDefault();dz.classList.add('over')});
+  dz.addEventListener('dragleave', ()=>dz.classList.remove('over'));
+  dz.addEventListener('drop', e=>{e.preventDefault();dz.classList.remove('over');handleFiles(e.dataTransfer.files)});
+  // Timeline drop
+  document.getElementById('tl-scroll').addEventListener('dragover', e=>e.preventDefault());
+  document.getElementById('tl-scroll').addEventListener('drop', e=>{
+    e.preventDefault();
+    const mId = +e.dataTransfer.getData('mId');
+    if(!mId) return;
+    const m = media.find(x=>x.id===mId);
+    if(!m) return;
+    const t = m.type==='video'?'video':'image';
+    const track = tracks.find(tr=>tr.type===t);
+    if(track) addClipToTrack(track.id, m);
+  });
+}
+function triggerImport(){ document.getElementById('fileInput').click(); }
 
 async function handleFiles(files) {
-  setStatus('Importando...', true);
-  const arr = Array.from(files);
-  for(const f of arr) {
-    if(f.type.startsWith('video/')) await addMediaItem(f,'video');
-    else if(f.type.startsWith('image/')) await addMediaItem(f,'image');
+  setStatus('Importando…',true);
+  for(const f of Array.from(files)){
+    if(f.type.startsWith('video/')) await importMedia(f,'video');
+    else if(f.type.startsWith('image/')) await importMedia(f,'image');
   }
-  setStatus('Importado '+arr.length+' arquivo(s)');
-  renderMediaGrid();
+  renderMgrid();
+  setStatus('Importado '+media.length+' arquivo(s)');
 }
 
-function addMediaItem(file, type) {
-  return new Promise(resolve => {
+function importMedia(file, type) {
+  return new Promise(res=>{
     const url = URL.createObjectURL(file);
-    const item = {id:uid(), type, file, url, duration:0, thumb:null, el:null};
-    if(type==='video') {
+    const item = {id:id(), type, file, url, duration:0, thumb:null, el:null};
+    if(type==='video'){
       const v = document.createElement('video');
-      v.src = url; v.muted = true; v.preload = 'metadata';
-      v.onloadedmetadata = () => {
-        item.duration = v.duration;
-        item.el = v;
-        v.currentTime = 0.5;
-        v.onseeked = () => {
-          const c = document.createElement('canvas');
-          c.width=160;c.height=284;
-          c.getContext('2d').drawImage(v,0,0,160,284);
-          item.thumb = c.toDataURL('image/jpeg',.6);
-          state.media.push(item);
-          resolve();
+      v.src=url; v.muted=true; v.preload='metadata';
+      v.onloadedmetadata = ()=>{
+        item.duration=v.duration; item.el=v;
+        v.currentTime=Math.min(0.5,v.duration/2);
+        v.onseeked=()=>{
+          const c=document.createElement('canvas'); c.width=120;c.height=200;
+          c.getContext('2d').drawImage(v,0,0,120,200);
+          item.thumb=c.toDataURL('image/jpeg',.6);
+          media.push(item); res();
         };
+        v.onerror=()=>{item.duration=5;media.push(item);res()};
       };
-      v.onerror = ()=>{ item.duration=5; state.media.push(item); resolve(); };
+      v.onerror=()=>{item.duration=5;media.push(item);res()};
     } else {
-      const img = new Image();
-      img.src = url;
-      img.onload = () => {
-        item.duration = 3;
-        item.el = img;
-        item.thumb = url;
-        state.media.push(item);
-        resolve();
-      };
+      const img=new Image(); img.src=url;
+      img.onload=()=>{item.duration=3;item.el=img;item.thumb=url;media.push(item);res()};
     }
   });
 }
 
-function handleAudioFile(files) {
+function handleAudio(files){
   if(!files||!files.length) return;
-  const f = files[0];
-  const url = URL.createObjectURL(f);
-  state.audioTrack = {file:f, url, volume:80, fade:false};
-  renderAudioList();
+  const f=files[0], url=URL.createObjectURL(f);
+  // Add to audio track
+  const at=tracks.find(t=>t.type==='audio');
+  if(!at) return;
+  const clip={
+    id:id(),mediaId:null,type:'audio',
+    file:f,url,start:0,duration:totalDur||30,
+    volume:80,fade:false,name:f.name
+  };
+  at.clips.push(clip);
+  renderTL(); updateTotalDur();
+  renderAudioSlot(f.name,clip);
   setStatus('Áudio: '+f.name);
 }
 
-function renderAudioList() {
-  const list = document.getElementById('audioList');
-  if(!state.audioTrack){list.innerHTML='';return;}
-  list.innerHTML = `
-    <div style="background:var(--s3);border-radius:var(--r);padding:10px;margin-bottom:8px">
-      <div style="font-size:11px;color:var(--acc);font-family:'IBM Plex Mono',monospace;margin-bottom:8px;word-break:break-all">${state.audioTrack.file.name}</div>
-      <div style="margin-bottom:6px">
-        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--t2);margin-bottom:4px"><span>Volume</span><span>${state.audioTrack.volume}%</span></div>
-        <input type="range" min="0" max="100" value="${state.audioTrack.volume}" oninput="state.audioTrack.volume=+this.value;this.previousElementSibling.lastChild.textContent=this.value+'%'">
+function renderAudioSlot(name,clip){
+  const slot=document.getElementById('audioSlot');
+  slot.innerHTML=`
+    <div style="background:var(--s3);border-radius:var(--r2);padding:10px;margin-bottom:8px">
+      <div style="font-size:10px;color:var(--acc3);font-family:'JetBrains Mono',monospace;margin-bottom:8px;word-break:break-all">${name}</div>
+      <div class="pr"><span class="pl">Volume</span><span class="pv" id="avollbl">${clip.volume}%</span></div>
+      <input type="range" min="0" max="100" value="${clip.volume}" oninput="clip&&(clip.volume=+this.value);document.getElementById('avollbl').textContent=this.value+'%'">
+      <div class="tog-row" style="margin-top:8px">
+        <span class="pl">Fade in/out</span>
+        <label class="tog"><input type="checkbox" onchange="clip&&(clip.fade=this.checked)"><span class="tog-sl"></span></label>
       </div>
-      <div class="toggle-row">
-        <span style="font-size:12px;color:var(--t2)">Fade in/out</span>
-        <label class="tog"><input type="checkbox" ${state.audioTrack.fade?'checked':''} onchange="state.audioTrack.fade=this.checked"><span class="tog-sl"></span></label>
-      </div>
-      <button class="btn-sm btn-danger" style="width:100%;margin-top:8px;text-align:center" onclick="state.audioTrack=null;renderAudioList()">Remover</button>
+      <button class="pbtn del" style="width:100%;margin-top:8px;text-align:center" onclick="removeAudioClip(${clip.id})">Remover</button>
     </div>`;
 }
+function removeAudioClip(cId){
+  const at=tracks.find(t=>t.type==='audio');
+  if(at) at.clips=at.clips.filter(c=>c.id!==cId);
+  document.getElementById('audioSlot').innerHTML='';
+  renderTL();
+}
 
-// ═══════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════
 // MEDIA GRID
-// ═══════════════════════════════════════════════════════
-function renderMediaGrid() {
-  const grid = document.getElementById('mediaGrid');
-  grid.innerHTML = '';
-  state.media.forEach(item => {
-    const div = document.createElement('div');
-    div.className = 'media-item';
-    div.draggable = true;
-    div.dataset.id = item.id;
-    if(item.thumb) {
-      const img = document.createElement('img');
-      img.src = item.thumb;
-      div.appendChild(img);
-    }
-    div.innerHTML += `<span class="media-badge mb-${item.type[0]}">${item.type==='video'?'VID':'IMG'}</span>
-      <span class="media-dur">${fmtDur(item.duration)}</span>
-      <div class="media-add-btn" onclick="addToTimeline(${item.id})">＋</div>`;
-    div.addEventListener('dragstart', e => { e.dataTransfer.setData('mediaId', item.id); div.classList.add('dragging-media'); });
-    div.addEventListener('dragend', () => div.classList.remove('dragging-media'));
-    div.addEventListener('dblclick', () => addToTimeline(item.id));
-    grid.appendChild(div);
+// ════════════════════════════════════════════════════════
+function renderMgrid(){
+  const g=document.getElementById('mgrid');
+  g.innerHTML='';
+  media.forEach(m=>{
+    const d=document.createElement('div');
+    d.className='mitem'; d.draggable=true; d.dataset.mId=m.id;
+    if(m.thumb){ const img=document.createElement('img'); img.src=m.thumb; d.appendChild(img); }
+    d.innerHTML+=`<span class="mitem-badge mb-${m.type[0]}">${m.type==='video'?'VID':'IMG'}</span>
+      <span class="mitem-dur">${fd(m.duration)}</span>
+      <div class="mitem-add">＋</div>`;
+    d.addEventListener('dragstart',e=>{e.dataTransfer.setData('mId',m.id);d.classList.add('dm')});
+    d.addEventListener('dragend',()=>d.classList.remove('dm'));
+    d.addEventListener('dblclick',()=>addMediaToTimeline(m.id));
+    g.appendChild(d);
   });
-  document.getElementById('clipCountLabel').textContent = state.media.length + ' arquivos';
+  document.getElementById('clipcnt').textContent=media.length+' arquivo'+( media.length!==1?'s':'');
+  document.getElementById('expBtn').disabled=!hasContent();
 }
 
-// ═══════════════════════════════════════════════════════
-// TIMELINE
-// ═══════════════════════════════════════════════════════
-function tlDragOver(e, track) { e.preventDefault(); }
-function tlDrop(e, track) {
-  e.preventDefault();
-  const id = +e.dataTransfer.getData('mediaId');
-  if(!id) return;
-  const item = state.media.find(m=>m.id===id);
-  if(!item) return;
-  // Determine target track by type
-  let targetTrack = track;
-  if(item.type==='video' && track!=='v') targetTrack='v';
-  if(item.type==='image' && track!=='i') targetTrack='i';
-  addClipToTrack(item, targetTrack);
+function addMediaToTimeline(mId){
+  const m=media.find(x=>x.id===mId); if(!m) return;
+  const type=m.type==='video'?'video':'image';
+  const track=tracks.find(t=>t.type===type); if(!track) return;
+  addClipToTrack(track.id,m);
 }
 
-function addToTimeline(mediaId) {
-  const item = state.media.find(m=>m.id===mediaId);
-  if(!item) return;
-  const track = item.type==='video'?'v':'i';
-  addClipToTrack(item, track);
-}
-
-function addClipToTrack(item, track) {
-  // Calculate start time (end of last clip in track)
-  const trackClips = state.clips[track];
-  const startT = trackClips.length ? Math.max(...trackClips.map(c=>c.start+c.duration)) : 0;
-  const clip = {
-    id: uid(),
-    mediaId: item.id,
-    track,
-    start: startT,
-    duration: item.duration,
-    trimStart: 0,
-    trimEnd: item.duration,
-    speed: 1,
-    muted: false,
-    volume: 100,
-    filter: 'none',
-    transition: state.transition,
-    brightness: 100,
-    contrast: 100,
-    saturation: 100,
-    opacity: 100,
-    item
+// ════════════════════════════════════════════════════════
+// CLIPS
+// ════════════════════════════════════════════════════════
+function addClipToTrack(trackId, m){
+  const track=tracks.find(t=>t.id===trackId); if(!track) return;
+  const endT=track.clips.reduce((mx,c)=>Math.max(mx,c.start+c.duration),0);
+  const clip={
+    id:id(), trackId,
+    mediaId:m.id, item:m,
+    start:endT, duration:m.duration,
+    trimStart:0, trimEnd:m.duration,
+    speed:1, muted:false, volume:100,
+    brightness:100,contrast:100,saturation:100,opacity:100,
+    transition:globalTransition,
+    filter:'none',
   };
-  state.clips[track].push(clip);
-  renderTimeline();
+  if(m.type==='video'&&!m.el.paused){m.el.pause();}
+  track.clips.push(clip);
+  renderTL(); updateTotalDur();
   renderCanvas();
-  updateTotalDur();
-  selectClip(track, clip.id);
-  document.getElementById('exportBtn').disabled = false;
-  document.getElementById('canvas-wrap').style.display = 'block';
-  document.getElementById('preview-empty').style.display = 'none';
+  document.getElementById('cvempty').style.display='none';
+  document.getElementById('expBtn').disabled=false;
+  selectClip(trackId,clip.id);
+  setStatus('Clip adicionado — '+m.file.name);
 }
 
-let tlDragClipId = null, tlDragTrack = null, tlDragOffX = 0;
+function removeClip(trackId,clipId){
+  const t=tracks.find(x=>x.id===trackId); if(!t) return;
+  t.clips=t.clips.filter(c=>c.id!==clipId);
+  if(selClip&&selClip.clipId===clipId) {selClip=null;showNoSel();}
+  renderTL(); updateTotalDur();
+}
 
-function renderTimeline() {
-  const pps = state.pxPerSec;
-  const total = Math.max(state.totalDur, 10);
-  const w = Math.max(total * pps + 200, 800);
+function duplicateClip(trackId,clipId){
+  const t=tracks.find(x=>x.id===trackId); if(!t) return;
+  const c=t.clips.find(x=>x.id===clipId); if(!c) return;
+  const nc={...c,id:id(),start:c.start+c.duration};
+  t.clips.push(nc); renderTL(); updateTotalDur();
+}
 
-  // Update inner width
-  const inner = document.getElementById('tl-inner');
-  inner.style.width = w + 'px';
+// ════════════════════════════════════════════════════════
+// TIMELINE RENDER
+// ════════════════════════════════════════════════════════
+function renderTL(){
+  const total=Math.max(totalDur,15);
+  const w=Math.max(total*pxPerSec+300,800);
+  const inner=document.getElementById('tl-inner');
+  inner.style.width=w+'px';
 
-  // Draw ruler
-  const rulerCanvas = document.getElementById('tl-ruler');
-  rulerCanvas.width = w;
-  const rc = rulerCanvas.getContext('2d');
-  rc.clearRect(0,0,w,18);
-  rc.fillStyle = '#1a1a1a';
-  rc.fillRect(0,0,w,18);
-  rc.strokeStyle = '#333';
-  rc.fillStyle = '#666';
-  rc.font = '9px IBM Plex Mono, monospace';
-  const step = pps >= 80 ? 1 : pps >= 40 ? 2 : 5;
-  for(let t=0;t<=total+step;t+=step) {
-    const x = t * pps;
-    rc.beginPath(); rc.moveTo(x, 10); rc.lineTo(x, 18); rc.stroke();
-    rc.fillText(fmtDur(t), x+2, 10);
+  // Ruler
+  const rc=document.getElementById('ruler-canvas');
+  rc.width=w;
+  const rx=rc.getContext('2d');
+  rx.clearRect(0,0,w,20);
+  rx.fillStyle='#181824'; rx.fillRect(0,0,w,20);
+  const step=pxPerSec>=120?0.5:pxPerSec>=60?1:pxPerSec>=30?2:5;
+  rx.strokeStyle='#2e2e44'; rx.fillStyle='#5a5a78';
+  rx.font='8px JetBrains Mono, monospace';
+  for(let t=0;t<=total+step;t+=step){
+    const x=t*pxPerSec;
+    rx.beginPath(); rx.moveTo(x,12); rx.lineTo(x,20); rx.stroke();
+    if(t%1===0) rx.fillText(fd(t),x+2,11);
   }
 
-  // Render each track
-  ['v','i','t','a'].forEach(track => {
-    const el = document.getElementById('track-'+track);
-    // Remove old clip blocks
-    el.querySelectorAll('.clip-block').forEach(b=>b.remove());
-    state.clips[track].forEach(clip => {
-      const block = document.createElement('div');
-      const w2 = Math.max(clip.duration * pps, 20);
-      block.className = 'clip-block clip-block-bg-'+track + (state.selectedClip&&state.selectedClip.id===clip.id?' sel':'');
-      block.style.cssText = `left:${clip.start*pps}px;width:${w2}px`;
-      block.dataset.clipId = clip.id;
-      block.dataset.track = track;
+  // Remove old track rows
+  inner.querySelectorAll('.tl-track').forEach(e=>e.remove());
 
-      // Thumbnail
-      if(clip.item.thumb && (track==='v'||track==='i')) {
-        const img = document.createElement('img');
-        img.src = clip.item.thumb;
-        img.className = 'clip-thumb-img';
+  const videoTracks=tracks.filter(t=>t.type==='video');
+  tracks.forEach((track,ti)=>{
+    const row=document.createElement('div');
+    row.className='tl-track';
+    const ci=videoTracks.indexOf(track);
+    const col=trackColor(track.type,ci);
+    row.classList.add(col.bg);
+    row.dataset.trackId=track.id;
+    row.style.cursor='crosshair';
+
+    // Allow drag-drop on each row
+    row.addEventListener('dragover',e=>e.preventDefault());
+    row.addEventListener('drop',e=>{
+      e.preventDefault();
+      const mId=+e.dataTransfer.getData('mId'); if(!mId) return;
+      const m=media.find(x=>x.id===mId); if(!m) return;
+      // Only allow matching type
+      if(track.type==='video'&&m.type!=='video') return;
+      if(track.type==='image'&&m.type!=='image') return;
+      const scrollLeft=document.getElementById('tl-scroll').scrollLeft;
+      const tlRect=document.getElementById('tl-scroll').getBoundingClientRect();
+      const labW=72;
+      const x=e.clientX-tlRect.left+scrollLeft-labW;
+      const t=Math.max(0,x/pxPerSec);
+      addClipAtTime(track.id,m,t);
+    });
+
+    // Right-click on track
+    row.addEventListener('contextmenu',e=>{
+      e.preventDefault();
+      const scrollLeft=document.getElementById('tl-scroll').scrollLeft;
+      const tlRect=row.getBoundingClientRect();
+      const x=e.clientX-tlRect.left+scrollLeft;
+      const t=x/pxPerSec;
+      ctxTarget={trackId:track.id,time:t,clipId:null};
+      // Find clip at this position
+      const clip=track.clips.find(c=>t>=c.start&&t<=c.start+c.duration);
+      if(clip) ctxTarget.clipId=clip.id;
+      showCtxMenu(e.clientX,e.clientY,!!clip);
+    });
+
+    track.clips.forEach(clip=>{
+      const block=document.createElement('div');
+      const bw=Math.max(clip.duration*pxPerSec,20);
+      block.className='cb '+col.cb+(selClip&&selClip.clipId===clip.id?' sel':'');
+      block.style.cssText=`left:${clip.start*pxPerSec}px;width:${bw}px`;
+      block.dataset.clipId=clip.id;
+      block.dataset.trackId=track.id;
+
+      if(clip.item&&clip.item.thumb&&track.type!=='audio'){
+        const img=document.createElement('img');
+        img.src=clip.item.thumb; img.className='cb-thumb';
         block.appendChild(img);
       }
 
-      const name = clip.item.file.name.substring(0,16);
-      block.innerHTML += `<span class="clip-label top">${name}</span>
-        <span class="clip-label bot">${fmtDur(clip.duration)} ${clip.speed!==1?'('+clip.speed+'×)':''} ${clip.muted?'🔇':''}</span>
-        <div class="clip-resize-l" onmousedown="startResizeClip(event,'${track}',${clip.id},'l')"></div>
-        <div class="clip-resize-r" onmousedown="startResizeClip(event,'${track}',${clip.id},'r')"></div>`;
+      const n=clip.item?clip.item.file.name.substring(0,14):(clip.name||'áudio').substring(0,14);
+      block.innerHTML+=`
+        <div class="cb-lbl">
+          <div class="cb-name">${n}</div>
+          <div class="cb-dur">${fd(clip.duration)}${clip.speed!==1?' '+clip.speed+'×':''}${clip.muted?' 🔇':''}</div>
+        </div>
+        <div class="cb-rz cb-rz-l"></div>
+        <div class="cb-rz cb-rz-r"></div>`;
 
-      block.onclick = e => { if(!e.target.classList.contains('clip-resize-l')&&!e.target.classList.contains('clip-resize-r')) selectClip(track, clip.id); };
-      block.onmousedown = e => { if(!e.target.classList.contains('clip-resize-l')&&!e.target.classList.contains('clip-resize-r')) startDragClip(e, track, clip.id); };
-      el.appendChild(block);
+      block.addEventListener('click',e=>{
+        if(e.target.classList.contains('cb-rz-l')||e.target.classList.contains('cb-rz-r')) return;
+        selectClip(track.id,clip.id);
+      });
+      block.addEventListener('contextmenu',e=>{
+        e.preventDefault(); e.stopPropagation();
+        const scrollLeft=document.getElementById('tl-scroll').scrollLeft;
+        const tlRect=row.getBoundingClientRect();
+        const x=e.clientX-tlRect.left+scrollLeft;
+        ctxTarget={trackId:track.id,clipId:clip.id,time:x/pxPerSec};
+        showCtxMenu(e.clientX,e.clientY,true);
+      });
+      block.addEventListener('mousedown',e=>{
+        if(e.target.classList.contains('cb-rz-l')||e.target.classList.contains('cb-rz-r')) return;
+        if(e.button!==0) return;
+        startDragClip(e,track.id,clip.id,block);
+      });
+
+      // Resize handles
+      block.querySelector('.cb-rz-l').addEventListener('mousedown',e=>{
+        e.stopPropagation(); startResizeClip(e,track.id,clip.id,'l');
+      });
+      block.querySelector('.cb-rz-r').addEventListener('mousedown',e=>{
+        e.stopPropagation(); startResizeClip(e,track.id,clip.id,'r');
+      });
+
+      row.appendChild(block);
     });
+
+    // Insert before playhead
+    inner.insertBefore(row, document.getElementById('playhead'));
   });
+
   updatePlayhead();
 }
 
-function startDragClip(e, track, clipId) {
+function addClipAtTime(trackId,m,startTime){
+  const track=tracks.find(t=>t.id===trackId); if(!track) return;
+  const clip={
+    id:id(),trackId,mediaId:m.id,item:m,
+    start:startTime,duration:m.duration,
+    trimStart:0,trimEnd:m.duration,
+    speed:1,muted:false,volume:100,
+    brightness:100,contrast:100,saturation:100,opacity:100,
+    transition:globalTransition,filter:'none',
+  };
+  track.clips.push(clip);
+  renderTL(); updateTotalDur();
+  document.getElementById('cvempty').style.display='none';
+  document.getElementById('expBtn').disabled=false;
+  selectClip(trackId,clip.id);
+}
+
+// ════════════════════════════════════════════════════════
+// CLIP DRAG & RESIZE
+// ════════════════════════════════════════════════════════
+function startDragClip(e,trackId,clipId,block){
   e.preventDefault();
-  tlDragClipId = clipId; tlDragTrack = track;
-  const block = e.currentTarget;
-  const rect = block.getBoundingClientRect();
-  tlDragOffX = e.clientX - rect.left;
-  const onMove = mv => {
-    const clip = state.clips[track].find(c=>c.id===clipId);
-    if(!clip) return;
-    const tlRect = document.getElementById('tl-scroll').getBoundingClientRect();
-    const scrollLeft = document.getElementById('tl-scroll').scrollLeft;
-    const x = mv.clientX - tlRect.left + scrollLeft - tlDragOffX - 80;
-    clip.start = Math.max(0, x / state.pxPerSec);
-    renderTimeline();
+  const track=tracks.find(t=>t.id===trackId);
+  const clip=track&&track.clips.find(c=>c.id===clipId);
+  if(!clip) return;
+  const rect=block.getBoundingClientRect();
+  const offX=e.clientX-rect.left;
+  const origStart=clip.start;
+  const move=mv=>{
+    const scroll=document.getElementById('tl-scroll').scrollLeft;
+    const tlRect=document.getElementById('tl-scroll').getBoundingClientRect();
+    const labW=72;
+    const x=mv.clientX-tlRect.left+scroll-labW-offX;
+    clip.start=Math.max(0,x/pxPerSec);
+    renderTL();
   };
-  const onUp = () => { document.removeEventListener('mousemove',onMove); document.removeEventListener('mouseup',onUp); updateTotalDur(); };
-  document.addEventListener('mousemove',onMove);
-  document.addEventListener('mouseup',onUp);
+  const up=()=>{document.removeEventListener('mousemove',move);document.removeEventListener('mouseup',up);updateTotalDur()};
+  document.addEventListener('mousemove',move);
+  document.addEventListener('mouseup',up);
 }
 
-function startResizeClip(e, track, clipId, side) {
-  e.stopPropagation(); e.preventDefault();
-  const startX = e.clientX;
-  const clip = state.clips[track].find(c=>c.id===clipId);
-  const origStart = clip.start, origDur = clip.duration;
-  const onMove = mv => {
-    const dx = (mv.clientX - startX) / state.pxPerSec;
-    if(side==='r') clip.duration = Math.max(0.2, origDur + dx);
-    else { clip.start = Math.max(0, origStart+dx); clip.duration = Math.max(0.2, origDur-dx); }
-    renderTimeline();
+function startResizeClip(e,trackId,clipId,side){
+  e.preventDefault();
+  const track=tracks.find(t=>t.id===trackId);
+  const clip=track&&track.clips.find(c=>c.id===clipId);
+  if(!clip) return;
+  const startX=e.clientX, origStart=clip.start, origDur=clip.duration;
+  const move=mv=>{
+    const dx=(mv.clientX-startX)/pxPerSec;
+    if(side==='r'){
+      clip.duration=Math.max(0.1,origDur+dx);
+      if(clip.item) clip.trimEnd=Math.min(clip.item.duration,clip.trimStart+clip.duration*clip.speed);
+    } else {
+      const newStart=Math.max(0,origStart+dx);
+      clip.duration=Math.max(0.1,origStart+origDur-newStart);
+      clip.start=newStart;
+    }
+    renderTL();
   };
-  const onUp = () => { document.removeEventListener('mousemove',onMove); document.removeEventListener('mouseup',onUp); updateTotalDur(); };
-  document.addEventListener('mousemove',onMove);
-  document.addEventListener('mouseup',onUp);
+  const up=()=>{document.removeEventListener('mousemove',move);document.removeEventListener('mouseup',up);updateTotalDur()};
+  document.addEventListener('mousemove',move);
+  document.addEventListener('mouseup',up);
 }
 
-function selectClip(track, clipId) {
-  state.selectedClip = {track, id: clipId};
-  renderTimeline();
-  renderClipProps(track, clipId);
+// ════════════════════════════════════════════════════════
+// PLAYHEAD DRAG
+// ════════════════════════════════════════════════════════
+function setupPlayheadDrag(){
+  const ph=document.getElementById('playhead');
+  ph.style.pointerEvents='all';
+  ph.style.cursor='ew-resize';
+  ph.addEventListener('mousedown',e=>{
+    if(isPlaying) pauseAll();
+    e.preventDefault();
+    phDragging=true;
+    const startX=e.clientX, startTime=playTime;
+    const move=mv=>{
+      const dx=(mv.clientX-startX)/pxPerSec;
+      playTime=Math.max(0,Math.min(totalDur,startTime+dx));
+      updatePlayhead();
+      renderCanvas(playTime);
+      updateProg();
+      updateTimecode(playTime);
+      // Scroll timeline if needed
+      const tlScroll=document.getElementById('tl-scroll');
+      const phX=playTime*pxPerSec;
+      const visible={l:tlScroll.scrollLeft,r:tlScroll.scrollLeft+tlScroll.clientWidth};
+      if(phX<visible.l+20) tlScroll.scrollLeft=Math.max(0,phX-40);
+      if(phX>visible.r-20) tlScroll.scrollLeft=phX-tlScroll.clientWidth+60;
+    };
+    const up=()=>{phDragging=false;document.removeEventListener('mousemove',move);document.removeEventListener('mouseup',up)};
+    document.addEventListener('mousemove',move);
+    document.addEventListener('mouseup',up);
+  });
+
+  // Click on ruler / tracks to set playhead
+  document.getElementById('tl-scroll').addEventListener('click',e=>{
+    if(e.target.closest('.cb')) return;
+    if(e.target.closest('.cb-rz')) return;
+    const tlRect=document.getElementById('tl-scroll').getBoundingClientRect();
+    const scroll=document.getElementById('tl-scroll').scrollLeft;
+    const x=e.clientX-tlRect.left+scroll;
+    playTime=Math.max(0,x/pxPerSec);
+    updatePlayhead(); renderCanvas(playTime); updateProg(); updateTimecode(playTime);
+  });
 }
 
-function removeClip(track, clipId) {
-  state.clips[track] = state.clips[track].filter(c=>c.id!==clipId);
-  state.selectedClip = null;
-  renderTimeline();
-  renderClipProps(null, null);
-  updateTotalDur();
+function updatePlayhead(){
+  const ph=document.getElementById('playhead');
+  ph.style.left=(playTime*pxPerSec)+'px';
 }
 
-// ═══════════════════════════════════════════════════════
-// PROPERTIES PANEL
-// ═══════════════════════════════════════════════════════
-function renderClipProps(track, clipId) {
-  const noSel = document.getElementById('noSelMsg');
-  const area = document.getElementById('clipPropsArea');
-  if(!track||!clipId) { noSel.style.display='block'; area.style.display='none'; return; }
-  const clip = state.clips[track] ? state.clips[track].find(c=>c.id===clipId) : null;
-  if(!clip) { noSel.style.display='block'; area.style.display='none'; return; }
-  noSel.style.display='none'; area.style.display='block';
+// ════════════════════════════════════════════════════════
+// CONTEXT MENU — CUT & DELETE
+// ════════════════════════════════════════════════════════
+function setupContextMenu(){
+  document.addEventListener('click',e=>{
+    if(!e.target.closest('#ctx-menu')) hideCtxMenu();
+  });
+  document.addEventListener('contextmenu',e=>{
+    if(!e.target.closest('.tl-track')&&!e.target.closest('.cb')) hideCtxMenu();
+  });
+}
+function showCtxMenu(x,y,hasClip){
+  const m=document.getElementById('ctx-menu');
+  document.getElementById('ctx-cut').style.display=hasClip?'flex':'none';
+  document.getElementById('ctx-dup').style.display=hasClip?'flex':'none';
+  document.getElementById('ctx-del').style.display=hasClip?'flex':'none';
+  if(!hasClip){
+    // No clip — nothing to show, set playhead instead
+    if(ctxTarget){
+      playTime=Math.max(0,ctxTarget.time);
+      updatePlayhead(); renderCanvas(playTime); updateProg(); updateTimecode(playTime);
+    }
+    return;
+  }
+  m.style.left=x+'px'; m.style.top=y+'px'; m.style.display='block';
+}
+function hideCtxMenu(){ document.getElementById('ctx-menu').style.display='none'; }
 
-  const isVideo = clip.item.type==='video';
-  const isImg = clip.item.type==='image';
+function ctxCut(){
+  hideCtxMenu();
+  if(!ctxTarget||!ctxTarget.clipId) return;
+  const {trackId,clipId,time}=ctxTarget;
+  const track=tracks.find(t=>t.id===trackId); if(!track) return;
+  const clip=track.clips.find(c=>c.id===clipId); if(!clip) return;
+  // Only cut if time is within clip
+  if(time<=clip.start||time>=clip.start+clip.duration) return;
+  const rightDur=clip.start+clip.duration-time;
+  const newClip={
+    ...clip, id:id(),
+    start:time,
+    duration:rightDur,
+    trimStart:clip.trimStart+(time-clip.start)*clip.speed,
+  };
+  clip.duration=time-clip.start;
+  clip.trimEnd=clip.trimStart+clip.duration*clip.speed;
+  track.clips.push(newClip);
+  renderTL(); updateTotalDur();
+  setStatus('Clip cortado em '+fd(time));
+}
+function ctxDuplicate(){
+  hideCtxMenu();
+  if(!ctxTarget||!ctxTarget.clipId) return;
+  duplicateClip(ctxTarget.trackId,ctxTarget.clipId);
+  setStatus('Clip duplicado');
+}
+function ctxDelete(){
+  hideCtxMenu();
+  if(!ctxTarget||!ctxTarget.clipId) return;
+  removeClip(ctxTarget.trackId,ctxTarget.clipId);
+  setStatus('Clip excluído');
+}
 
-  area.innerHTML = `
-    <div class="prop-section">
-      <div class="prop-section-title">CLIP</div>
-      <div style="font-size:11px;color:var(--t3);margin-bottom:10px;word-break:break-all;font-family:'IBM Plex Mono',monospace">${clip.item.file.name}</div>
-      ${isVideo?`
-      <div class="prop-row"><span class="prop-label">Duração total</span><span class="prop-val">${fmtDur(clip.item.duration)}</span></div>
-      <div style="margin-bottom:8px">
-        <div class="prop-row"><span class="prop-label">Trim início</span><span class="prop-val" id="pvTrimS">${clip.trimStart.toFixed(1)}s</span></div>
-        <input type="range" min="0" max="${clip.item.duration}" step="0.05" value="${clip.trimStart}" oninput="updateClipProp('trimStart',+this.value,'pvTrimS',v=>v.toFixed(1)+'s')">
+// ════════════════════════════════════════════════════════
+// SELECT CLIP & PROPS
+// ════════════════════════════════════════════════════════
+function selectClip(trackId,clipId){
+  selClip={trackId,clipId}; selOv=null;
+  renderTL(); renderProps();
+}
+function showNoSel(){
+  document.getElementById('nosel').style.display='block';
+  document.getElementById('proparea').style.display='none';
+  document.getElementById('propsSubtitle').textContent='–';
+}
+function renderProps(){
+  const {trackId,clipId}=selClip;
+  const track=tracks.find(t=>t.id===trackId);
+  const clip=track&&track.clips.find(c=>c.id===clipId);
+  if(!clip){showNoSel();return;}
+  document.getElementById('nosel').style.display='none';
+  const area=document.getElementById('proparea');
+  area.style.display='block';
+  document.getElementById('propsSubtitle').textContent=clip.item?clip.item.file.name.substring(0,20):'áudio';
+
+  const isVid=clip.item&&clip.item.type==='video';
+  const isImg=clip.item&&clip.item.type==='image';
+  const isAud=track.type==='audio';
+
+  area.innerHTML=`
+    <div class="ps">
+      <div class="ps-title">CLIP</div>
+      ${isVid?`
+      <div class="pr"><span class="pl">Dur. original</span><span class="pv">${fd(clip.item.duration)}</span></div>
+      <div style="margin-bottom:7px">
+        <div class="pr"><span class="pl">Trim início</span><span class="pv" id="pvts">${clip.trimStart.toFixed(1)}s</span></div>
+        <input type="range" min="0" max="${clip.item.duration}" step="0.05" value="${clip.trimStart}" oninput="clipProp(${clipId},'trimStart',+this.value,'pvts',v=>v.toFixed(1)+'s')">
       </div>
-      <div style="margin-bottom:8px">
-        <div class="prop-row"><span class="prop-label">Trim fim</span><span class="prop-val" id="pvTrimE">${clip.trimEnd.toFixed(1)}s</span></div>
-        <input type="range" min="0" max="${clip.item.duration}" step="0.05" value="${clip.trimEnd}" oninput="updateClipProp('trimEnd',+this.value,'pvTrimE',v=>v.toFixed(1)+'s')">
+      <div style="margin-bottom:7px">
+        <div class="pr"><span class="pl">Trim fim</span><span class="pv" id="pvte">${clip.trimEnd.toFixed(1)}s</span></div>
+        <input type="range" min="0" max="${clip.item.duration}" step="0.05" value="${clip.trimEnd}" oninput="clipProp(${clipId},'trimEnd',+this.value,'pvte',v=>v.toFixed(1)+'s')">
       </div>
-      <div style="margin-bottom:8px">
-        <div class="prop-row"><span class="prop-label">Velocidade</span><span class="prop-val" id="pvSpeed">${clip.speed}×</span></div>
-        <input type="range" min="0.25" max="4" step="0.25" value="${clip.speed}" oninput="updateClipProp('speed',+this.value,'pvSpeed',v=>v+'×')">
+      <div style="margin-bottom:7px">
+        <div class="pr"><span class="pl">Velocidade</span><span class="pv" id="pvsp">${clip.speed}×</span></div>
+        <input type="range" min="0.25" max="4" step="0.25" value="${clip.speed}" oninput="clipSpeedProp(${clipId},+this.value)">
       </div>
-      <div class="toggle-row"><span class="prop-label">Sem áudio</span><label class="tog"><input type="checkbox" ${clip.muted?'checked':''} onchange="updateClipPropDirect('muted',this.checked)"><span class="tog-sl"></span></label></div>
-      <div style="margin-bottom:8px;margin-top:8px">
-        <div class="prop-row"><span class="prop-label">Volume clip</span><span class="prop-val" id="pvVol">${clip.volume}%</span></div>
-        <input type="range" min="0" max="100" value="${clip.volume}" oninput="updateClipProp('volume',+this.value,'pvVol',v=>v+'%')">
+      <div class="tog-row"><span class="pl">Sem áudio</span><label class="tog"><input type="checkbox" ${clip.muted?'checked':''} onchange="clipPropDirect(${clipId},'muted',this.checked)"><span class="tog-sl"></span></label></div>
+      <div style="margin-bottom:7px">
+        <div class="pr"><span class="pl">Volume</span><span class="pv" id="pvvol">${clip.volume}%</span></div>
+        <input type="range" min="0" max="100" value="${clip.volume}" oninput="clipProp(${clipId},'volume',+this.value,'pvvol',v=>v+'%')">
       </div>
-      `:isImg?`
-      <div style="margin-bottom:8px">
-        <div class="prop-row"><span class="prop-label">Duração</span><span class="prop-val" id="pvImgDur">${clip.duration}s</span></div>
-        <input type="range" min="0.5" max="30" step="0.5" value="${clip.duration}" oninput="updateClipPropDuration(+this.value)">
+      `:''}
+      ${isImg?`
+      <div style="margin-bottom:7px">
+        <div class="pr"><span class="pl">Duração</span><span class="pv" id="pvid">${clip.duration}s</span></div>
+        <input type="range" min="0.5" max="30" step="0.5" value="${clip.duration}" oninput="clipImgDur(${clipId},+this.value)">
       </div>
       `:''}
     </div>
-    <div class="prop-section">
-      <div class="prop-section-title">IMAGEM & COR</div>
-      <div style="margin-bottom:8px">
-        <div class="prop-row"><span class="prop-label">Brilho</span><span class="prop-val" id="pvBright">${clip.brightness}%</span></div>
-        <input type="range" min="0" max="200" value="${clip.brightness}" oninput="updateClipProp('brightness',+this.value,'pvBright',v=>v+'%')">
+    <div class="ps">
+      <div class="ps-title">COR & IMAGEM</div>
+      <div style="margin-bottom:7px">
+        <div class="pr"><span class="pl">Brilho</span><span class="pv" id="pvbr">${clip.brightness}%</span></div>
+        <input type="range" min="0" max="200" value="${clip.brightness}" oninput="clipProp(${clipId},'brightness',+this.value,'pvbr',v=>v+'%')">
       </div>
-      <div style="margin-bottom:8px">
-        <div class="prop-row"><span class="prop-label">Contraste</span><span class="prop-val" id="pvContrast">${clip.contrast}%</span></div>
-        <input type="range" min="0" max="200" value="${clip.contrast}" oninput="updateClipProp('contrast',+this.value,'pvContrast',v=>v+'%')">
+      <div style="margin-bottom:7px">
+        <div class="pr"><span class="pl">Contraste</span><span class="pv" id="pvco">${clip.contrast}%</span></div>
+        <input type="range" min="0" max="200" value="${clip.contrast}" oninput="clipProp(${clipId},'contrast',+this.value,'pvco',v=>v+'%')">
       </div>
-      <div style="margin-bottom:8px">
-        <div class="prop-row"><span class="prop-label">Saturação</span><span class="prop-val" id="pvSat">${clip.saturation}%</span></div>
-        <input type="range" min="0" max="200" value="${clip.saturation}" oninput="updateClipProp('saturation',+this.value,'pvSat',v=>v+'%')">
+      <div style="margin-bottom:7px">
+        <div class="pr"><span class="pl">Saturação</span><span class="pv" id="pvsa">${clip.saturation}%</span></div>
+        <input type="range" min="0" max="200" value="${clip.saturation}" oninput="clipProp(${clipId},'saturation',+this.value,'pvsa',v=>v+'%')">
       </div>
-      <div style="margin-bottom:8px">
-        <div class="prop-row"><span class="prop-label">Opacidade</span><span class="prop-val" id="pvOp">${clip.opacity}%</span></div>
-        <input type="range" min="0" max="100" value="${clip.opacity}" oninput="updateClipProp('opacity',+this.value,'pvOp',v=>v+'%')">
+      <div style="margin-bottom:7px">
+        <div class="pr"><span class="pl">Opacidade</span><span class="pv" id="pvop">${clip.opacity}%</span></div>
+        <input type="range" min="0" max="100" value="${clip.opacity}" oninput="clipProp(${clipId},'opacity',+this.value,'pvop',v=>v+'%')">
       </div>
     </div>
-    <div class="prop-section">
-      <div class="prop-section-title">TRANSIÇÃO</div>
-      <select onchange="updateClipPropDirect('transition',this.value)">
-        ${['none','fade','zoom','slide','wipe','flash'].map(t=>`<option value="${t}" ${clip.transition===t?'selected':''}>${t==='none'?'Corte seco':t.charAt(0).toUpperCase()+t.slice(1)}</option>`).join('')}
+    <div class="ps">
+      <div class="ps-title">TRANSIÇÃO</div>
+      <select onchange="clipPropDirect(${clipId},'transition',this.value)">
+        ${['none','fade','zoom','slide','wipe','flash'].map(tr=>`<option value="${tr}" ${clip.transition===tr?'selected':''}>${tr==='none'?'Corte seco':tr.charAt(0).toUpperCase()+tr.slice(1)}</option>`).join('')}
       </select>
     </div>
-    <div style="margin-top:14px;display:flex;gap:6px">
-      <button class="btn-sm" style="flex:1" onclick="duplicateClip('${track}',${clipId})">Duplicar</button>
-      <button class="btn-sm btn-danger" style="flex:1" onclick="removeClip('${track}',${clipId})">Excluir</button>
+    <div style="display:flex;gap:6px;margin-top:12px">
+      <button class="pbtn" style="flex:1" onclick="duplicateClip(${trackId},${clipId})">Duplicar</button>
+      <button class="pbtn del" style="flex:1" onclick="removeClip(${trackId},${clipId})">Excluir</button>
     </div>`;
 }
 
-function updateClipProp(prop, val, labelId, fmt) {
-  if(!state.selectedClip) return;
-  const {track, id} = state.selectedClip;
-  const clip = state.clips[track].find(c=>c.id===id);
-  if(!clip) return;
-  clip[prop] = val;
-  if(labelId) document.getElementById(labelId).textContent = fmt(val);
-  if(prop==='speed') { clip.duration = (clip.trimEnd-clip.trimStart)/clip.speed; renderTimeline(); updateTotalDur(); }
-  renderCanvas();
+function findClip(clipId){
+  for(const t of tracks){const c=t.clips.find(x=>x.id===clipId);if(c)return{track:t,clip:c}}
+  return null;
+}
+function clipProp(clipId,prop,val,lblId,fmt){
+  const r=findClip(clipId); if(!r) return;
+  r.clip[prop]=val;
+  if(lblId) document.getElementById(lblId).textContent=fmt(val);
+  renderTL(); renderCanvas();
+}
+function clipPropDirect(clipId,prop,val){
+  const r=findClip(clipId); if(!r) return;
+  r.clip[prop]=val; renderTL(); renderCanvas();
+}
+function clipSpeedProp(clipId,val){
+  const r=findClip(clipId); if(!r) return;
+  r.clip.speed=val;
+  r.clip.duration=(r.clip.trimEnd-r.clip.trimStart)/val;
+  document.getElementById('pvsp').textContent=val+'×';
+  renderTL(); updateTotalDur();
+}
+function clipImgDur(clipId,val){
+  const r=findClip(clipId); if(!r) return;
+  r.clip.duration=val;
+  document.getElementById('pvid').textContent=val+'s';
+  renderTL(); updateTotalDur();
 }
 
-function updateClipPropDirect(prop, val) {
-  if(!state.selectedClip) return;
-  const {track, id} = state.selectedClip;
-  const clip = state.clips[track].find(c=>c.id===id);
-  if(!clip) return;
-  clip[prop] = val;
-  renderTimeline();
-  renderCanvas();
-}
-
-function updateClipPropDuration(val) {
-  if(!state.selectedClip) return;
-  const {track, id} = state.selectedClip;
-  const clip = state.clips[track].find(c=>c.id===id);
-  if(!clip) return;
-  clip.duration = val;
-  document.getElementById('pvImgDur').textContent = val+'s';
-  renderTimeline(); updateTotalDur();
-}
-
-function duplicateClip(track, clipId) {
-  const clip = state.clips[track].find(c=>c.id===clipId);
-  if(!clip) return;
-  const newClip = {...clip, id:uid(), start: clip.start+clip.duration};
-  state.clips[track].push(newClip);
-  renderTimeline(); updateTotalDur();
-}
-
-// ═══════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════
 // TEXT OVERLAYS
-// ═══════════════════════════════════════════════════════
-function addTextOverlay() {
-  const ov = {
-    id: uid(), type:'text',
-    text:'Seu texto aqui',
-    x:30, y:PH/2-20,
-    w:300, h:60,
-    fontSize:28, color:'#ffffff',
-    bgColor:'transparent',
-    bold:true, italic:false,
-    anim: state.textAnim,
-    startT:0, endT:state.totalDur||5
+// ════════════════════════════════════════════════════════
+function addTextOverlay(){
+  const f=FORMATS[curFmt];
+  const ov={
+    id:id(),type:'text',
+    text:'Seu texto',
+    x:20,y:f.h/2-20,w:f.w-40,h:60,
+    fontSize:28,color:'#ffffff',bgColor:'transparent',
+    bold:true,italic:false,
+    anim:globalTxtAnim,
+    startT:0,endT:totalDur||5,
   };
-  state.overlays.push(ov);
-  renderOverlayEls();
+  overlays.push(ov);
+  renderOverlayDOM();
   selectOverlay(ov.id);
   setStatus('Texto adicionado');
 }
 
-function addImageOverlay(mediaId) {
-  const item = state.media.find(m=>m.id===mediaId);
-  if(!item) return;
-  const ov = {
-    id: uid(), type:'image',
-    mediaId,
-    x: 20, y: 20, w: 120, h: 213,
-    opacity: 100,
-    startT: 0, endT: state.totalDur||5,
-    item
+function addImgOverlay(mediaId){
+  const m=media.find(x=>x.id===mediaId); if(!m) return;
+  const f=FORMATS[curFmt];
+  const ov={
+    id:id(),type:'img',mediaId,item:m,
+    x:10,y:10,w:Math.round(f.w/3),h:Math.round(f.w/3*16/9),
+    opacity:100,startT:0,endT:totalDur||5,
   };
-  state.overlays.push(ov);
-  renderOverlayEls();
+  overlays.push(ov);
+  renderOverlayDOM();
   selectOverlay(ov.id);
 }
 
-function renderOverlayEls() {
-  const wrap = document.getElementById('canvas-wrap');
-  wrap.querySelectorAll('.txt-overlay,.img-overlay').forEach(e=>e.remove());
-  state.overlays.forEach(ov => {
-    const el = document.createElement('div');
-    el.dataset.ovId = ov.id;
-    if(ov.type==='text') {
-      el.className = 'txt-overlay' + (state.selectedOverlay===ov.id?' sel':'');
-      el.style.cssText = `left:${ov.x}px;top:${ov.y}px;width:${ov.w}px;font-size:${ov.fontSize}px;color:${ov.color};background:${ov.bgColor};font-weight:${ov.bold?700:400};font-style:${ov.italic?'italic':'normal'}`;
-      el.textContent = ov.text;
+function renderOverlayDOM(){
+  const wrap=document.getElementById('cvwrap');
+  wrap.querySelectorAll('.ov-el,.ov-txt').forEach(e=>e.remove());
+  const f=FORMATS[curFmt];
+  const scale=parseInt(canvas.style.width)/f.w;
+
+  overlays.forEach(ov=>{
+    const el=document.createElement('div');
+    const isSel=selOv===ov.id;
+    const sx=ov.x*scale, sy=ov.y*scale;
+
+    if(ov.type==='text'){
+      el.className='ov-txt'+(isSel?' sel':'');
+      el.style.cssText=`left:${sx}px;top:${sy}px;width:${ov.w*scale}px;
+        font-size:${ov.fontSize*scale}px;color:${ov.color};
+        background:${ov.bgColor};font-weight:${ov.bold?700:400};
+        font-style:${ov.italic?'italic':'normal'};`;
+      el.textContent=ov.text;
     } else {
-      el.className = 'img-overlay' + (state.selectedOverlay===ov.id?' sel':'');
-      el.style.cssText = `left:${ov.x}px;top:${ov.y}px;width:${ov.w}px;height:${ov.h}px;opacity:${ov.opacity/100}`;
-      const img = document.createElement('img');
-      img.src = ov.item.url; img.style.cssText='width:100%;height:100%;object-fit:contain;pointer-events:none';
+      el.className='ov-el'+(isSel?' sel':'');
+      el.style.cssText=`left:${sx}px;top:${sy}px;width:${ov.w*scale}px;height:${ov.h*scale}px;opacity:${ov.opacity/100}`;
+      const img=document.createElement('img');
+      img.src=ov.item.url;
+      img.style.cssText='width:100%;height:100%;object-fit:contain;display:block;pointer-events:none';
       el.appendChild(img);
-      const rh = document.createElement('div');
-      rh.className='resize-handle';
-      rh.onmousedown = e => startResizeOverlay(e, ov.id);
+      const rh=document.createElement('div');
+      rh.className='ov-corner';
+      rh.addEventListener('mousedown',e=>startResizeOv(e,ov.id,scale));
       el.appendChild(rh);
     }
-    makeDraggableOverlay(el, ov);
-    el.onclick = () => selectOverlay(ov.id);
+    makeDragOv(el,ov,scale);
+    el.addEventListener('click',()=>selectOverlay(ov.id));
     wrap.appendChild(el);
   });
 }
 
-function makeDraggableOverlay(el, ov) {
-  el.addEventListener('mousedown', e => {
-    if(e.target.classList.contains('resize-handle')) return;
+function makeDragOv(el,ov,scale){
+  el.addEventListener('mousedown',e=>{
+    if(e.target.classList.contains('ov-corner')) return;
     e.preventDefault();
-    const startX=e.clientX, startY=e.clientY, ox=ov.x, oy=ov.y;
-    const move = mv => { ov.x=ox+(mv.clientX-startX); ov.y=oy+(mv.clientY-startY); el.style.left=ov.x+'px'; el.style.top=ov.y+'px'; };
-    const up = () => { document.removeEventListener('mousemove',move); document.removeEventListener('mouseup',up); };
-    document.addEventListener('mousemove',move); document.addEventListener('mouseup',up);
+    const sx=e.clientX,sy=e.clientY,ox=ov.x,oy=ov.y;
+    const move=mv=>{ov.x=ox+(mv.clientX-sx)/scale;ov.y=oy+(mv.clientY-sy)/scale;renderOverlayDOM()};
+    const up=()=>{document.removeEventListener('mousemove',move);document.removeEventListener('mouseup',up)};
+    document.addEventListener('mousemove',move);document.addEventListener('mouseup',up);
   });
 }
 
-function startResizeOverlay(e, ovId) {
-  e.stopPropagation(); e.preventDefault();
-  const ov = state.overlays.find(o=>o.id===ovId);
-  const startX=e.clientX, startY=e.clientY, ow=ov.w, oh=ov.h;
-  const move = mv => { ov.w=Math.max(40,ow+(mv.clientX-startX)); ov.h=Math.max(40,oh+(mv.clientY-startY)); renderOverlayEls(); };
-  const up = () => { document.removeEventListener('mousemove',move); document.removeEventListener('mouseup',up); };
-  document.addEventListener('mousemove',move); document.addEventListener('mouseup',up);
+function startResizeOv(e,ovId,scale){
+  e.stopPropagation();e.preventDefault();
+  const ov=overlays.find(o=>o.id===ovId); if(!ov) return;
+  const sx=e.clientX,sy=e.clientY,ow=ov.w,oh=ov.h;
+  const move=mv=>{ov.w=Math.max(30,ow+(mv.clientX-sx)/scale);ov.h=Math.max(30,oh+(mv.clientY-sy)/scale);renderOverlayDOM()};
+  const up=()=>{document.removeEventListener('mousemove',move);document.removeEventListener('mouseup',up)};
+  document.addEventListener('mousemove',move);document.addEventListener('mouseup',up);
 }
 
-function selectOverlay(ovId) {
-  state.selectedOverlay = ovId;
-  state.selectedClip = null;
-  renderOverlayEls();
-  renderOverlayProps(ovId);
+function selectOverlay(ovId){
+  selOv=ovId; selClip=null;
+  renderOverlayDOM(); renderTL();
+  renderOvProps(ovId);
 }
 
-function renderOverlayProps(ovId) {
-  const ov = state.overlays.find(o=>o.id===ovId);
-  const noSel = document.getElementById('noSelMsg');
-  const area = document.getElementById('clipPropsArea');
-  if(!ov) { noSel.style.display='block'; area.style.display='none'; return; }
-  noSel.style.display='none'; area.style.display='block';
+function renderOvProps(ovId){
+  const ov=overlays.find(o=>o.id===ovId);
+  if(!ov){showNoSel();return;}
+  document.getElementById('nosel').style.display='none';
+  document.getElementById('proparea').style.display='block';
+  document.getElementById('propsSubtitle').textContent=ov.type==='text'?'Texto':'Imagem overlay';
+  const area=document.getElementById('proparea');
 
-  if(ov.type==='text') {
-    area.innerHTML = `
-      <div class="prop-section">
-        <div class="prop-section-title">TEXTO</div>
-        <textarea onchange="updateOv(${ov.id},'text',this.value)" style="margin-bottom:8px">${ov.text}</textarea>
-        <div class="prop-row"><span class="prop-label">Tamanho</span><span class="prop-val" id="pvFS">${ov.fontSize}px</span></div>
-        <input type="range" min="12" max="120" value="${ov.fontSize}" oninput="updateOv(${ov.id},'fontSize',+this.value);document.getElementById('pvFS').textContent=this.value+'px';renderOverlayEls()">
-        <div class="prop-row" style="margin-top:8px"><span class="prop-label">Cor do texto</span><input type="color" value="${ov.color}" onchange="updateOv(${ov.id},'color',this.value);renderOverlayEls()" style="width:40px;height:24px;border:none;background:none;cursor:pointer;padding:0"></div>
-        <div class="prop-row"><span class="prop-label">Cor fundo</span><input type="color" value="${ov.bgColor==='transparent'?'#000000':ov.bgColor}" onchange="updateOv(${ov.id},'bgColor',this.value);renderOverlayEls()" style="width:40px;height:24px;border:none;background:none;cursor:pointer;padding:0"></div>
-        <div class="toggle-row"><span class="prop-label">Negrito</span><label class="tog"><input type="checkbox" ${ov.bold?'checked':''} onchange="updateOv(${ov.id},'bold',this.checked);renderOverlayEls()"><span class="tog-sl"></span></label></div>
-        <div class="toggle-row"><span class="prop-label">Itálico</span><label class="tog"><input type="checkbox" ${ov.italic?'checked':''} onchange="updateOv(${ov.id},'italic',this.checked);renderOverlayEls()"><span class="tog-sl"></span></label></div>
+  if(ov.type==='text'){
+    area.innerHTML=`
+      <div class="ps"><div class="ps-title">TEXTO</div>
+        <textarea style="margin-bottom:8px" onchange="ovProp(${ov.id},'text',this.value);renderOverlayDOM()">${ov.text}</textarea>
+        <div class="pr"><span class="pl">Tamanho</span><span class="pv" id="pvfs">${ov.fontSize}px</span></div>
+        <input type="range" min="8" max="120" value="${ov.fontSize}" oninput="ovProp(${ov.id},'fontSize',+this.value);document.getElementById('pvfs').textContent=this.value+'px';renderOverlayDOM()">
+        <div class="pr" style="margin-top:8px"><span class="pl">Cor texto</span><input type="color" value="${ov.color}" onchange="ovProp(${ov.id},'color',this.value);renderOverlayDOM()" style="width:36px;height:22px;border:none;background:none;cursor:pointer;padding:0"></div>
+        <div class="pr"><span class="pl">Cor fundo</span><input type="color" value="${ov.bgColor==='transparent'?'#000000':ov.bgColor}" onchange="ovProp(${ov.id},'bgColor',this.value);renderOverlayDOM()" style="width:36px;height:22px;border:none;background:none;cursor:pointer;padding:0"></div>
+        <div class="tog-row"><span class="pl">Negrito</span><label class="tog"><input type="checkbox" ${ov.bold?'checked':''} onchange="ovProp(${ov.id},'bold',this.checked);renderOverlayDOM()"><span class="tog-sl"></span></label></div>
+        <div class="tog-row"><span class="pl">Itálico</span><label class="tog"><input type="checkbox" ${ov.italic?'checked':''} onchange="ovProp(${ov.id},'italic',this.checked);renderOverlayDOM()"><span class="tog-sl"></span></label></div>
       </div>
-      <div class="prop-section">
-        <div class="prop-section-title">ANIMAÇÃO</div>
-        <select onchange="updateOv(${ov.id},'anim',this.value)">
+      <div class="ps"><div class="ps-title">ANIMAÇÃO</div>
+        <select onchange="ovProp(${ov.id},'anim',this.value)">
           <option value="none" ${ov.anim==='none'?'selected':''}>Nenhuma</option>
           <option value="fadein" ${ov.anim==='fadein'?'selected':''}>Fade in</option>
           <option value="slidein" ${ov.anim==='slidein'?'selected':''}>Slide in</option>
           <option value="pop" ${ov.anim==='pop'?'selected':''}>Pop</option>
+          <option value="typewriter" ${ov.anim==='typewriter'?'selected':''}>Typewriter</option>
+          <option value="bounce" ${ov.anim==='bounce'?'selected':''}>Bounce</option>
         </select>
       </div>
-      <div class="prop-section">
-        <div class="prop-section-title">TEMPO</div>
-        <div class="prop-row"><span class="prop-label">Início</span><input type="number" value="${ov.startT}" min="0" step="0.1" onchange="updateOv(${ov.id},'startT',+this.value)" style="width:70px"></div>
-        <div class="prop-row"><span class="prop-label">Fim</span><input type="number" value="${ov.endT}" min="0" step="0.1" onchange="updateOv(${ov.id},'endT',+this.value)" style="width:70px"></div>
+      <div class="ps"><div class="ps-title">TEMPO</div>
+        <div class="pr"><span class="pl">Início</span><input type="number" value="${ov.startT}" min="0" step="0.1" onchange="ovProp(${ov.id},'startT',+this.value)" style="width:72px"></div>
+        <div class="pr"><span class="pl">Fim</span><input type="number" value="${ov.endT}" min="0" step="0.1" onchange="ovProp(${ov.id},'endT',+this.value)" style="width:72px"></div>
       </div>
-      <button class="btn-sm btn-danger" style="width:100%;margin-top:6px;text-align:center" onclick="removeOverlay(${ov.id})">Excluir elemento</button>`;
+      <button class="pbtn del" style="width:100%;text-align:center;margin-top:6px" onclick="removeOverlay(${ov.id})">Excluir texto</button>`;
   } else {
-    area.innerHTML = `
-      <div class="prop-section">
-        <div class="prop-section-title">IMAGEM OVERLAY</div>
-        <div class="prop-row"><span class="prop-label">Opacidade</span><span class="prop-val" id="pvOvOp">${ov.opacity}%</span></div>
-        <input type="range" min="0" max="100" value="${ov.opacity}" oninput="updateOv(${ov.id},'opacity',+this.value);document.getElementById('pvOvOp').textContent=this.value+'%';renderOverlayEls()">
-        <div class="prop-row" style="margin-top:8px"><span class="prop-label">Início</span><input type="number" value="${ov.startT}" min="0" step="0.1" onchange="updateOv(${ov.id},'startT',+this.value)" style="width:70px"></div>
-        <div class="prop-row"><span class="prop-label">Fim</span><input type="number" value="${ov.endT}" min="0" step="0.1" onchange="updateOv(${ov.id},'endT',+this.value)" style="width:70px"></div>
+    area.innerHTML=`
+      <div class="ps"><div class="ps-title">IMAGEM OVERLAY</div>
+        <div class="pr"><span class="pl">Opacidade</span><span class="pv" id="pvoop">${ov.opacity}%</span></div>
+        <input type="range" min="0" max="100" value="${ov.opacity}" oninput="ovProp(${ov.id},'opacity',+this.value);document.getElementById('pvoop').textContent=this.value+'%';renderOverlayDOM()">
+        <div class="pr" style="margin-top:8px"><span class="pl">Início</span><input type="number" value="${ov.startT}" min="0" step="0.1" onchange="ovProp(${ov.id},'startT',+this.value)" style="width:72px"></div>
+        <div class="pr"><span class="pl">Fim</span><input type="number" value="${ov.endT}" min="0" step="0.1" onchange="ovProp(${ov.id},'endT',+this.value)" style="width:72px"></div>
       </div>
-      <button class="btn-sm btn-danger" style="width:100%;margin-top:6px;text-align:center" onclick="removeOverlay(${ov.id})">Excluir elemento</button>`;
+      <button class="pbtn del" style="width:100%;text-align:center;margin-top:6px" onclick="removeOverlay(${ov.id})">Excluir overlay</button>`;
   }
 }
 
-function updateOv(id, prop, val) {
-  const ov = state.overlays.find(o=>o.id===id);
-  if(ov) ov[prop] = val;
+function ovProp(id,prop,val){const ov=overlays.find(o=>o.id===id);if(ov)ov[prop]=val;}
+function removeOverlay(id){
+  const i=overlays.findIndex(o=>o.id===id);
+  if(i>=0) overlays.splice(i,1);
+  selOv=null; renderOverlayDOM(); showNoSel();
 }
 
-function removeOverlay(id) {
-  state.overlays = state.overlays.filter(o=>o.id!==id);
-  state.selectedOverlay = null;
-  renderOverlayEls();
-  document.getElementById('noSelMsg').style.display='block';
-  document.getElementById('clipPropsArea').style.display='none';
-}
-
-// ═══════════════════════════════════════════════════════
-// EFFECTS
-// ═══════════════════════════════════════════════════════
-const FILTER_PRESETS = {
-  none:{brightness:100,contrast:100,saturation:100},
-  vivid:{brightness:110,contrast:120,saturation:150},
-  cold:{brightness:100,contrast:105,saturation:80},
-  warm:{brightness:105,contrast:100,saturation:120},
-  bw:{brightness:100,contrast:110,saturation:0},
-  fade:{brightness:115,contrast:80,saturation:70},
-  retro:{brightness:95,contrast:90,saturation:60},
-  neon:{brightness:120,contrast:130,saturation:200}
-};
-
-function applyFilterPreset(preset, btn) {
-  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  if(!state.selectedClip) return;
-  const {track,id}=state.selectedClip;
-  const clip=state.clips[track].find(c=>c.id===id);
-  if(!clip) return;
-  const p=FILTER_PRESETS[preset];
-  clip.brightness=p.brightness; clip.contrast=p.contrast; clip.saturation=p.saturation;
-  clip.filter=preset;
-  renderClipProps(track,id);
-  renderCanvas();
-}
-
-function setTransition(t, btn) {
-  document.querySelectorAll('.trans-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  state.transition = t;
-  if(state.selectedClip) {
-    const {track,id}=state.selectedClip;
-    const clip=state.clips[track].find(c=>c.id===id);
-    if(clip) clip.transition=t;
-  }
-}
-
-function setTextAnim(a, btn) {
-  document.querySelectorAll('.filter-grid .filter-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  state.textAnim=a;
-}
-
-// ═══════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════
 // CANVAS RENDER
-// ═══════════════════════════════════════════════════════
-function getClipsAtTime(t) {
-  const result = {};
-  ['v','i','t','a'].forEach(track => {
-    result[track] = state.clips[track].filter(c => t>=c.start && t<c.start+c.duration);
-  });
-  return result;
-}
+// ════════════════════════════════════════════════════════
+function renderCanvas(t){
+  if(t===undefined) t=playTime;
+  const f=FORMATS[curFmt];
+  ctx.clearRect(0,0,f.w,f.h);
+  ctx.fillStyle='#000'; ctx.fillRect(0,0,f.w,f.h);
 
-function renderCanvas(t) {
-  if(t===undefined) t = state.playTime;
-  ctx2.clearRect(0,0,PW,PH);
-  ctx2.fillStyle='#000';
-  ctx2.fillRect(0,0,PW,PH);
-
-  const at = getClipsAtTime(t);
-
-  // VIDEO TRACK
-  if(at.v.length) {
-    const clip = at.v[0];
-    const localT = t - clip.start;
-    const videoT = clip.trimStart + localT * clip.speed;
-    const el = clip.item.el;
-    if(el) {
-      if(el.tagName==='VIDEO') {
-        if(Math.abs(el.currentTime - videoT) > 0.15) el.currentTime = videoT;
+  // Render all video tracks bottom to top
+  const videoTracks=tracks.filter(tr=>tr.type==='video');
+  for(const track of videoTracks){
+    const clips=track.clips.filter(c=>t>=c.start&&t<c.start+c.duration);
+    for(const clip of clips){
+      const lT=t-clip.start;
+      const vT=clip.trimStart+lT*clip.speed;
+      const el=clip.item.el;
+      if(el){
+        if(el.tagName==='VIDEO'&&Math.abs(el.currentTime-vT)>0.15){el.currentTime=vT;}
+        ctx.save();
+        ctx.filter=`brightness(${clip.brightness}%) contrast(${clip.contrast}%) saturate(${clip.saturation}%)`;
+        ctx.globalAlpha=clip.opacity/100;
+        drawFit(el,f.w,f.h);
+        ctx.filter='none'; ctx.globalAlpha=1; ctx.restore();
       }
-      applyClipFilter(ctx2, clip, ()=>{ ctx2.drawImage(el,0,0,PW,PH); });
     }
   }
 
-  // IMAGE TRACK (overlay on video)
-  if(at.i.length) {
-    const clip = at.i[0];
-    const el = clip.item.el;
-    if(el) {
-      applyClipFilter(ctx2, clip, ()=>{ ctx2.globalAlpha=clip.opacity/100; ctx2.drawImage(el,0,0,PW,PH); ctx2.globalAlpha=1; });
+  // IMAGE TRACK (overlay on top of all video)
+  const imgTrack=tracks.find(tr=>tr.type==='image');
+  if(imgTrack){
+    const clips=imgTrack.clips.filter(c=>t>=c.start&&t<c.start+c.duration);
+    for(const clip of clips){
+      const el=clip.item.el;
+      if(el){
+        ctx.save();
+        ctx.filter=`brightness(${clip.brightness}%) contrast(${clip.contrast}%) saturate(${clip.saturation}%)`;
+        ctx.globalAlpha=clip.opacity/100;
+        drawFit(el,f.w,f.h);
+        ctx.filter='none'; ctx.globalAlpha=1; ctx.restore();
+      }
     }
   }
-
-  // TEXT TRACK (rendered as overlay DOM, not canvas)
-  // OVERLAYS
-  state.overlays.forEach(ov => {
-    if(t<ov.startT||t>ov.endT) return;
-    // visible — DOM handles it
-  });
-
-  updatePlayhead();
-  updateTimeCode(t);
 }
 
-function applyClipFilter(ctx, clip, drawFn) {
-  ctx.save();
-  ctx.filter = `brightness(${clip.brightness}%) contrast(${clip.contrast}%) saturate(${clip.saturation}%)`;
-  ctx.globalAlpha = clip.opacity/100;
-  drawFn();
-  ctx.filter = 'none';
-  ctx.globalAlpha = 1;
-  ctx.restore();
+function drawFit(el,W,H){
+  const eW=el.videoWidth||el.naturalWidth||W;
+  const eH=el.videoHeight||el.naturalHeight||H;
+  if(!eW||!eH){ctx.drawImage(el,0,0,W,H);return;}
+  const scale=Math.max(W/eW,H/eH);
+  const sw=eW*scale,sh=eH*scale;
+  const ox=(W-sw)/2,oy=(H-sh)/2;
+  ctx.drawImage(el,ox,oy,sw,sh);
 }
 
-// ═══════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════
+// EFFECTS
+// ════════════════════════════════════════════════════════
+const FX={
+  none:{brightness:100,contrast:100,saturation:100},
+  vivid:{brightness:110,contrast:125,saturation:160},
+  cold:{brightness:100,contrast:108,saturation:70},
+  warm:{brightness:108,contrast:100,saturation:130},
+  bw:{brightness:100,contrast:115,saturation:0},
+  fade:{brightness:118,contrast:78,saturation:65},
+  retro:{brightness:95,contrast:88,saturation:55},
+  neon:{brightness:125,contrast:135,saturation:210},
+  dream:{brightness:112,contrast:85,saturation:90},
+  punch:{brightness:100,contrast:140,saturation:150},
+};
+function applyFxPreset(preset,btn){
+  document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  if(!selClip) return;
+  const r=findClip(selClip.clipId); if(!r) return;
+  const p=FX[preset];
+  r.clip.brightness=p.brightness; r.clip.contrast=p.contrast; r.clip.saturation=p.saturation;
+  r.clip.filter=preset;
+  renderProps(); renderCanvas();
+}
+function setGlobalTrans(t,btn){
+  document.querySelectorAll('.xbtn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  globalTransition=t;
+  if(selClip){const r=findClip(selClip.clipId);if(r)r.clip.transition=t;}
+}
+function setTxtAnim(a,btn){
+  document.querySelectorAll('.xbtn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  globalTxtAnim=a;
+}
+
+// ════════════════════════════════════════════════════════
 // PLAYBACK
-// ═══════════════════════════════════════════════════════
-const audioEl = new Audio();
-audioEl.loop = true;
+// ════════════════════════════════════════════════════════
+const audioEl=new Audio(); audioEl.loop=true;
 
-function togglePlay() {
-  if(state.isPlaying) pausePlayback(); else startPlayback();
-}
-
-function startPlayback() {
+function togglePlay(){if(isPlaying)pauseAll();else startAll();}
+function startAll(){
   if(!hasContent()) return;
-  state.isPlaying = true;
-  state.lastFrameT = performance.now();
+  isPlaying=true; lastT=performance.now();
   setPlayIcon(true);
-  // Start all video elements at correct positions
-  ['v'].forEach(track => {
-    state.clips[track].forEach(clip => {
-      if(state.playTime>=clip.start && state.playTime<clip.start+clip.duration) {
+  // Start video elements
+  tracks.filter(t=>t.type==='video').forEach(tr=>{
+    tr.clips.forEach(clip=>{
+      if(playTime>=clip.start&&playTime<clip.start+clip.duration){
+        const lT=playTime-clip.start;
         const el=clip.item.el;
-        if(el&&el.tagName==='VIDEO') {
-          const localT = state.playTime-clip.start;
-          el.currentTime=clip.trimStart+localT*clip.speed;
-          el.playbackRate=clip.speed;
-          el.muted=clip.muted;
-          el.volume=clip.volume/100;
-          el.play().catch(()=>{});
+        if(el&&el.tagName==='VIDEO'){
+          el.currentTime=clip.trimStart+lT*clip.speed;
+          el.playbackRate=clip.speed; el.muted=clip.muted;
+          el.volume=clip.volume/100; el.play().catch(()=>{});
         }
       }
     });
   });
-  if(state.audioTrack) {
-    audioEl.src=state.audioTrack.url;
-    audioEl.volume=state.audioTrack.volume/100;
-    audioEl.play().catch(()=>{});
+  // Audio track
+  const at=tracks.find(t=>t.type==='audio');
+  if(at&&at.clips.length){
+    const ac=at.clips[0];
+    audioEl.src=ac.url; audioEl.volume=ac.volume/100; audioEl.play().catch(()=>{});
   }
   rafLoop();
 }
-
-function pausePlayback() {
-  state.isPlaying=false;
-  setPlayIcon(false);
-  cancelAnimationFrame(state.raf);
-  state.clips.v.forEach(clip=>{ if(clip.item.el&&clip.item.el.pause) clip.item.el.pause(); });
+function pauseAll(){
+  isPlaying=false; setPlayIcon(false);
+  cancelAnimationFrame(raf);
+  tracks.filter(t=>t.type==='video').forEach(tr=>tr.clips.forEach(c=>{if(c.item.el&&c.item.el.pause)c.item.el.pause()}));
   audioEl.pause();
 }
-
-function rafLoop() {
-  const now = performance.now();
-  const dt = (now - state.lastFrameT) / 1000;
-  state.lastFrameT = now;
-  state.playTime += dt;
-  if(state.playTime >= state.totalDur) {
-    state.playTime = 0;
-    pausePlayback();
-    return;
-  }
-  renderCanvas(state.playTime);
-  updateProgress();
-  state.raf = requestAnimationFrame(rafLoop);
-}
-
-function setPlayIcon(playing) {
-  const icon = playing ? '<rect x="6" y="5" width="4" height="14" fill="currentColor"/><rect x="14" y="5" width="4" height="14" fill="currentColor"/>' : '<path d="M8 5v14l11-7z"/>';
-  document.getElementById('playIcon').innerHTML=icon;
-  document.getElementById('topPlayIcon').innerHTML=icon;
-  document.getElementById('topPlayLabel').textContent=playing?'Pause':'Play';
-}
-
-function seekClick(e) {
-  const rect=document.getElementById('progTrack').getBoundingClientRect();
-  const pct=(e.clientX-rect.left)/rect.width;
-  state.playTime=Math.max(0,Math.min(state.totalDur,pct*state.totalDur));
-  renderCanvas(state.playTime);
-  updateProgress();
+function rafLoop(){
+  const now=performance.now();
+  const dt=(now-lastT)/1000; lastT=now;
+  playTime+=dt;
+  if(playTime>=totalDur){playTime=0;pauseAll();return;}
+  renderCanvas(playTime);
   updatePlayhead();
+  updateProg();
+  updateTimecode(playTime);
+  raf=requestAnimationFrame(rafLoop);
 }
 
-function updateProgress() {
-  const pct=state.totalDur>0?(state.playTime/state.totalDur*100):0;
-  document.getElementById('progFill').style.width=pct+'%';
-  document.getElementById('progHead').style.left=pct+'%';
+function setPlayIcon(p){
+  const ic=p?'<rect x="6" y="5" width="4" height="14" fill="currentColor"/><rect x="14" y="5" width="4" height="14" fill="currentColor"/>':'<path d="M8 5v14l11-7z"/>';
+  document.getElementById('playIcon').innerHTML=ic;
 }
 
-function updatePlayhead() {
-  const ph=document.getElementById('playhead');
-  const x=state.playTime*state.pxPerSec;
-  ph.style.left=x+'px';
-}
-
-function updateTimeCode(t) {
-  const m=Math.floor(t/60), s=Math.floor(t%60), cs=Math.floor((t%1)*100);
-  document.getElementById('timeCode').textContent=`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}.${String(cs).padStart(2,'0')}`;
-}
-
-// ═══════════════════════════════════════════════════════
-// ZOOM
-// ═══════════════════════════════════════════════════════
-function zoomTL(dir) {
-  const levels=[20,40,60,80,120,160,240];
-  let idx=levels.indexOf(state.pxPerSec);
-  if(idx<0) idx=3;
-  idx=Math.max(0,Math.min(levels.length-1,idx+dir));
-  state.pxPerSec=levels[idx];
-  state.zoom=state.pxPerSec/80;
-  document.getElementById('zoomLabel').textContent=(state.pxPerSec/80).toFixed(2).replace(/\.?0+$/,'')+'×';
-  renderTimeline();
-}
-
-// ═══════════════════════════════════════════════════════
-// HELPERS
-// ═══════════════════════════════════════════════════════
-function hasContent() {
-  return state.clips.v.length||state.clips.i.length||state.clips.t.length;
-}
-
-function updateTotalDur() {
-  let max=0;
-  ['v','i','t','a'].forEach(track=>{
-    state.clips[track].forEach(c=>{ max=Math.max(max,c.start+c.duration); });
+// Progressbar drag
+function setupProgDrag(){
+  const head=document.getElementById('phead');
+  const track=document.getElementById('ptrack');
+  head.style.cursor='ew-resize';
+  head.addEventListener('mousedown',e=>{
+    e.preventDefault();
+    if(isPlaying)pauseAll();
+    const rect=track.getBoundingClientRect();
+    const move=mv=>{
+      const pct=Math.max(0,Math.min(1,(mv.clientX-rect.left)/rect.width));
+      playTime=pct*totalDur; updateProg(); updatePlayhead(); updateTimecode(playTime); renderCanvas(playTime);
+    };
+    const up=()=>{document.removeEventListener('mousemove',move);document.removeEventListener('mouseup',up)};
+    document.addEventListener('mousemove',move); document.addEventListener('mouseup',up);
   });
-  state.totalDur=max;
-  const m=Math.floor(max/60),s=Math.floor(max%60);
-  document.getElementById('totalDurStat').textContent=`Total: ${m}:${String(s).padStart(2,'0')}`;
-  renderTimeline();
 }
 
-function fmtDur(s) {
-  if(s<60) return s.toFixed(1)+'s';
-  const m=Math.floor(s/60); return m+'m'+Math.floor(s%60)+'s';
+function seekClick(e){
+  if(e.target===document.getElementById('phead')) return;
+  const rect=document.getElementById('ptrack').getBoundingClientRect();
+  const pct=Math.max(0,Math.min(1,(e.clientX-rect.left)/rect.width));
+  playTime=pct*totalDur; updateProg(); updatePlayhead(); updateTimecode(playTime); renderCanvas(playTime);
 }
 
-function setStatus(msg, busy=false) {
-  document.getElementById('statusTxt').textContent=msg;
+function updateProg(){
+  const pct=totalDur>0?(playTime/totalDur*100):0;
+  document.getElementById('pfill').style.width=pct+'%';
+  document.getElementById('phead').style.left=pct+'%';
+}
+function updateTimecode(t){
+  const m=Math.floor(t/60),s=Math.floor(t%60),cs=Math.floor((t%1)*100);
+  document.getElementById('timecode').textContent=`${pad(m)}:${pad(s)}.${pad(cs)}`;
+}
+
+// ════════════════════════════════════════════════════════
+// ZOOM
+// ════════════════════════════════════════════════════════
+function zoom(dir){
+  const lvls=[15,25,40,60,80,120,180,260,400];
+  let i=lvls.indexOf(pxPerSec); if(i<0) i=4;
+  i=Math.max(0,Math.min(lvls.length-1,i+dir));
+  pxPerSec=lvls[i];
+  document.getElementById('zlabel').textContent=(pxPerSec/80).toFixed(2).replace(/\.?0+$/,'')+'×';
+  renderTL();
+}
+
+// ════════════════════════════════════════════════════════
+// SIDEBAR TABS
+// ════════════════════════════════════════════════════════
+function stab(tab,el){
+  document.querySelectorAll('.stab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  ['media','audio','fx'].forEach(id=>{
+    document.getElementById('sb'+id.charAt(0).toUpperCase()+id.slice(1)).style.display=id===tab?'block':'none';
+  });
+}
+
+// ════════════════════════════════════════════════════════
+// HELPERS
+// ════════════════════════════════════════════════════════
+function hasContent(){return tracks.some(t=>t.clips.length>0)}
+function updateTotalDur(){
+  let mx=0;
+  tracks.forEach(t=>t.clips.forEach(c=>mx=Math.max(mx,c.start+c.duration)));
+  totalDur=mx;
+  const m=Math.floor(mx/60),s=Math.floor(mx%60);
+  document.getElementById('totaldur').textContent=`Total: ${m}:${pad(s)}`;
+  document.getElementById('expBtn').disabled=!hasContent();
+}
+function fd(s){if(s<60)return s.toFixed(1)+'s';return Math.floor(s/60)+'m'+Math.floor(s%60)+'s'}
+function pad(n){return String(Math.floor(n)).padStart(2,'0')}
+function setStatus(msg,busy=false){
+  document.getElementById('stxt').textContent=msg;
   document.getElementById('sdot').className='sdot'+(busy?' busy':'');
 }
 
-// ═══════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════
 // EXPORT
-// ═══════════════════════════════════════════════════════
-function openExport() {
+// ════════════════════════════════════════════════════════
+function openExport(){
   if(!hasContent()) return;
-  document.getElementById('exportModal').classList.add('open');
-  document.getElementById('expBarFill').style.width='0%';
-  document.getElementById('expLog').textContent='';
-  document.getElementById('expActions').style.display='flex';
-  document.getElementById('expDownload').style.display='none';
+  const modal=document.getElementById('expModal');
+  modal.classList.add('open');
+  document.getElementById('expfill').style.width='0%';
+  document.getElementById('explog').textContent='';
+  document.getElementById('expacts').style.display='flex';
+  document.getElementById('expdl').style.display='none';
   document.getElementById('startExpBtn').disabled=false;
+  // Update desc
+  const f=FORMATS[curFmt];
+  document.getElementById('expDesc').textContent=`${curFmt} · ${f.w}×${f.h} · ${tracks.filter(t=>t.clips.length).length} camadas`;
 }
-function closeExport() { document.getElementById('exportModal').classList.remove('open'); }
+function closeExport(){document.getElementById('expModal').classList.remove('open')}
 
-function expLog(msg) {
-  const el=document.getElementById('expLog');
-  el.textContent+=msg+'\n';
-  el.scrollTop=el.scrollHeight;
-}
+function elog(msg){const el=document.getElementById('explog');el.textContent+=msg+'\n';el.scrollTop=el.scrollHeight}
 
-async function startExport() {
+async function startExport(){
   document.getElementById('startExpBtn').disabled=true;
-  document.getElementById('expActions').style.display='none';
-  setStatus('Exportando...', true);
+  document.getElementById('expacts').style.display='none';
+  setStatus('Exportando…',true);
 
   const res=+document.getElementById('resSelect').value;
   const fps=+document.getElementById('fpsSelect').value;
-  const W=res, H=Math.round(res*16/9);
+  const fmt=FORMATS[curFmt];
+  const scale=res/Math.max(fmt.w,fmt.h);
+  const W=Math.round(fmt.w*scale), H=Math.round(fmt.h*scale);
 
-  const offCanvas=document.createElement('canvas');
-  offCanvas.width=W; offCanvas.height=H;
-  const oc=offCanvas.getContext('2d');
+  const oc=document.createElement('canvas'); oc.width=W; oc.height=H;
+  const ox=oc.getContext('2d');
+  elog(`Iniciando ${W}×${H} @ ${fps}fps`);
+  document.getElementById('expfill').style.width='3%';
 
-  expLog('Iniciando — '+W+'×'+H+' @ '+fps+'fps');
-  document.getElementById('expBarFill').style.width='5%';
-
-  let stream, recorder, chunks=[];
-  try {
-    stream=offCanvas.captureStream(fps);
-    const bits=res>=1080?8000000:res>=720?5000000:2500000;
+  let stream,recorder,chunks=[];
+  try{
+    stream=oc.captureStream(fps);
+    const bits=res>=1080?8e6:res>=720?5e6:2.5e6;
     recorder=new MediaRecorder(stream,{mimeType:'video/webm;codecs=vp8',videoBitsPerSecond:bits});
-    recorder.ondataavailable=e=>{ if(e.data.size>0) chunks.push(e.data); };
-  } catch(ex) {
-    expLog('ERRO: '+ex.message); setStatus('Erro no export'); return;
-  }
+    recorder.ondataavailable=e=>{if(e.data.size>0)chunks.push(e.data)};
+  }catch(ex){elog('ERRO: '+ex.message);setStatus('Erro');return;}
 
   recorder.start(200);
-  const total=state.totalDur;
-  const frameDelay=1000/fps;
-  expLog('Total: '+fmtDur(total));
-
-  let rendered=0;
-  const renderStep=async(t)=>{
-    oc.clearRect(0,0,W,H);
-    oc.fillStyle='#000'; oc.fillRect(0,0,W,H);
-
-    // VIDEO
-    const vClips=state.clips.v.filter(c=>t>=c.start&&t<c.start+c.duration);
-    for(const clip of vClips) {
-      const lT=t-clip.start;
-      const vT=clip.trimStart+lT*clip.speed;
-      const el=clip.item.el;
-      if(el&&el.tagName==='VIDEO') {
-        if(Math.abs(el.currentTime-vT)>0.08) { el.currentTime=vT; await new Promise(r=>{el.onseeked=r;setTimeout(r,200);}); }
-        oc.save();
-        oc.filter=`brightness(${clip.brightness}%) contrast(${clip.contrast}%) saturate(${clip.saturation}%)`;
-        oc.globalAlpha=clip.opacity/100;
-        oc.drawImage(el,0,0,W,H);
-        oc.filter='none'; oc.globalAlpha=1; oc.restore();
-      }
-    }
-
-    // IMAGE
-    const iClips=state.clips.i.filter(c=>t>=c.start&&t<c.start+c.duration);
-    for(const clip of iClips) {
-      const el=clip.item.el;
-      if(el) {
-        oc.save();
-        oc.filter=`brightness(${clip.brightness}%) contrast(${clip.contrast}%) saturate(${clip.saturation}%)`;
-        oc.globalAlpha=clip.opacity/100;
-        oc.drawImage(el,0,0,W,H);
-        oc.filter='none'; oc.globalAlpha=1; oc.restore();
-      }
-    }
-
-    // OVERLAYS
-    state.overlays.forEach(ov=>{
-      if(t<ov.startT||t>ov.endT) return;
-      if(ov.type==='text') {
-        const scaleX=W/PW, scaleY=H/PH;
-        oc.save();
-        oc.font=`${ov.bold?'bold ':''} ${ov.italic?'italic ':''} ${Math.round(ov.fontSize*scaleX)}px Syne, sans-serif`;
-        oc.fillStyle=ov.color;
-        oc.fillText(ov.text, ov.x*scaleX, (ov.y+ov.fontSize)*scaleY);
-        oc.restore();
-      } else if(ov.type==='image') {
-        const scaleX=W/PW, scaleY=H/PH;
-        oc.save();
-        oc.globalAlpha=ov.opacity/100;
-        oc.drawImage(ov.item.el, ov.x*scaleX, ov.y*scaleY, ov.w*scaleX, ov.h*scaleY);
-        oc.globalAlpha=1; oc.restore();
-      }
-    });
-  };
+  const total=totalDur;
+  elog('Duração: '+fd(total));
 
   const frames=Math.ceil(total*fps);
-  for(let f=0;f<frames;f++) {
-    const t=f/fps;
-    await renderStep(t);
-    await new Promise(r=>setTimeout(r,frameDelay));
-    const pct=5+Math.round((f/frames)*88);
-    document.getElementById('expBarFill').style.width=pct+'%';
-    if(f%Math.ceil(fps)===0) expLog('Frame '+f+'/'+frames+' — '+fmtDur(t));
+  for(let f2=0;f2<frames;f2++){
+    const t=f2/fps;
+    ox.clearRect(0,0,W,H); ox.fillStyle='#000'; ox.fillRect(0,0,W,H);
+
+    // Video tracks
+    for(const track of tracks.filter(tr=>tr.type==='video')){
+      for(const clip of track.clips.filter(c=>t>=c.start&&t<c.start+c.duration)){
+        const el=clip.item.el;
+        if(el){
+          const lT=t-clip.start, vT=clip.trimStart+lT*clip.speed;
+          if(el.tagName==='VIDEO'&&Math.abs(el.currentTime-vT)>0.08){
+            el.currentTime=vT; await new Promise(r=>{el.onseeked=r;setTimeout(r,150)});
+          }
+          ox.save();
+          ox.filter=`brightness(${clip.brightness}%) contrast(${clip.contrast}%) saturate(${clip.saturation}%)`;
+          ox.globalAlpha=clip.opacity/100;
+          const eW=el.videoWidth||el.naturalWidth||W, eH=el.videoHeight||el.naturalHeight||H;
+          const sc=Math.max(W/eW,H/eH);
+          ox.drawImage(el,(W-eW*sc)/2,(H-eH*sc)/2,eW*sc,eH*sc);
+          ox.filter='none'; ox.globalAlpha=1; ox.restore();
+        }
+      }
+    }
+    // Image track
+    const it=tracks.find(tr=>tr.type==='image');
+    if(it) for(const clip of it.clips.filter(c=>t>=c.start&&t<c.start+c.duration)){
+      const el=clip.item.el;
+      if(el){
+        ox.save();
+        ox.filter=`brightness(${clip.brightness}%) contrast(${clip.contrast}%) saturate(${clip.saturation}%)`;
+        ox.globalAlpha=clip.opacity/100;
+        const eW=el.naturalWidth||W, eH=el.naturalHeight||H;
+        const sc=Math.max(W/eW,H/eH);
+        ox.drawImage(el,(W-eW*sc)/2,(H-eH*sc)/2,eW*sc,eH*sc);
+        ox.filter='none'; ox.globalAlpha=1; ox.restore();
+      }
+    }
+    // Text overlays
+    for(const ov of overlays.filter(o=>o.type==='text'&&t>=o.startT&&t<=o.endT)){
+      ox.save();
+      ox.font=`${ov.bold?'bold ':''} ${ov.italic?'italic ':''} ${Math.round(ov.fontSize*W/fmt.w)}px Outfit, sans-serif`;
+      ox.fillStyle=ov.color;
+      ox.fillText(ov.text, ov.x*W/fmt.w, (ov.y+ov.fontSize)*H/fmt.h);
+      ox.restore();
+    }
+
+    await new Promise(r=>setTimeout(r,1000/fps));
+    const pct=3+Math.round(f2/frames*90);
+    document.getElementById('expfill').style.width=pct+'%';
+    if(f2%fps===0) elog(`${fd(t)} / ${fd(total)}`);
   }
 
-  expLog('Finalizando...');
-  document.getElementById('expBarFill').style.width='95%';
+  elog('Finalizando…');
   recorder.stop();
   recorder.onstop=()=>{
     const blob=new Blob(chunks,{type:'video/webm'});
-    const url=URL.createObjectURL(blob);
-    document.getElementById('dlLink').href=url;
-    document.getElementById('expBarFill').style.width='100%';
-    expLog('Pronto! '+Math.round(blob.size/1024)+'KB');
-    document.getElementById('expDownload').style.display='block';
+    document.getElementById('dllink').href=URL.createObjectURL(blob);
+    document.getElementById('expfill').style.width='100%';
+    elog('Pronto! '+Math.round(blob.size/1024)+'KB');
+    document.getElementById('expdl').style.display='block';
     setStatus('Exportado com sucesso!');
   };
 }
 
-// ═══════════════════════════════════════════════════════
-// KEYBOARD SHORTCUTS
-// ═══════════════════════════════════════════════════════
-document.addEventListener('keydown', e=>{
-  if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA') return;
-  if(e.code==='Space') { e.preventDefault(); togglePlay(); }
-  if(e.code==='Delete'||e.code==='Backspace') {
-    if(state.selectedClip) removeClip(state.selectedClip.track, state.selectedClip.id);
-    if(state.selectedOverlay) removeOverlay(state.selectedOverlay);
+// ════════════════════════════════════════════════════════
+// KEYBOARD
+// ════════════════════════════════════════════════════════
+document.addEventListener('keydown',e=>{
+  if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA'||e.target.tagName==='SELECT') return;
+  if(e.code==='Space'){e.preventDefault();togglePlay();}
+  if(e.code==='Delete'||e.code==='Backspace'){
+    if(selClip)removeClip(selClip.trackId,selClip.clipId);
+    if(selOv)removeOverlay(selOv);
   }
-  if(e.code==='ArrowLeft') { state.playTime=Math.max(0,state.playTime-.1); renderCanvas(); updateProgress(); }
-  if(e.code==='ArrowRight') { state.playTime=Math.min(state.totalDur,state.playTime+.1); renderCanvas(); updateProgress(); }
+  if(e.code==='ArrowLeft'){playTime=Math.max(0,playTime-.05);renderCanvas();updateProg();updatePlayhead();updateTimecode(playTime);}
+  if(e.code==='ArrowRight'){playTime=Math.min(totalDur,playTime+.05);renderCanvas();updateProg();updatePlayhead();updateTimecode(playTime);}
+  if((e.ctrlKey||e.metaKey)&&e.code==='KeyD'&&selClip){e.preventDefault();duplicateClip(selClip.trackId,selClip.clipId);}
 });
 
-// Add image to overlay from media panel (double click image in panel)
-document.getElementById('mediaGrid').addEventListener('dblclick', e=>{
-  const item = e.target.closest('.media-item');
-  if(!item) return;
-  const id=+item.dataset.id;
-  const m=state.media.find(x=>x.id===id);
-  if(m&&m.type==='image') addImageOverlay(id);
+// Double click on image in media grid = add as overlay
+document.getElementById('mgrid').addEventListener('dblclick',e=>{
+  const item=e.target.closest('.mitem'); if(!item) return;
+  const mId=+item.dataset.mId;
+  const m=media.find(x=>x.id===mId);
+  if(m&&m.type==='image') addImgOverlay(mId);
+  else if(m&&m.type==='video') addMediaToTimeline(mId);
 });
+
+// ════════════════════════════════════════════════════════
+// BOOT
+// ════════════════════════════════════════════════════════
+init();
+
+(function(){
+  const splash=document.getElementById('splash');
+  setTimeout(()=>{
+    splash.classList.add('done');
+    document.body.classList.add('app-ready');
+    ['topbar','app','timeline','statusbar'].forEach((el,i)=>{
+      setTimeout(()=>document.getElementById(el).classList.add('visible'),i*60);
+    });
+    setTimeout(()=>splash.remove(),600);
+  },1650);
+})();
 </script>
 </body>
 </html>
